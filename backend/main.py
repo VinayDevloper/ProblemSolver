@@ -2,16 +2,45 @@ from fastapi import FastAPI
 from backend.db import engine
 from sqlalchemy import text
 from pydantic import BaseModel
-from passlib.context import CryptContext
-from jose import jwt
-from datetime import datetime, timedelta, timezone
-from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError
 from fastapi import Depends
-from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from backend.routes.auth_routes import router as auth_router
 
 app = FastAPI()
+app.include_router(auth_router)
+
+app.mount(
+    "/uploads",
+    StaticFiles(directory="uploads"),
+    name="uploads"
+)
+
+from backend.routes.auth_routes import (
+    get_current_user,
+    oauth2_scheme
+)
+
+from backend.routes.issue_routes import (
+    router as issue_router
+)
+app.include_router(issue_router)
+
+from backend.routes.comment_routes import (
+    router as comment_router
+)
+app.include_router(comment_router)
+
+
+from backend.routes.claim_routes import (
+    router as claim_router
+)
+app.include_router(claim_router)
+
+from backend.routes.verification_routes import (
+    router as verification_router
+)
+app.include_router(verification_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -20,90 +49,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
-
-SECRET_KEY = "mysecretkey"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
-
-
-pwd_context = CryptContext(
-    schemes=["bcrypt"],
-    deprecated = "auto"
-)
-
-
-def create_access_token(data:dict):
-
-    to_encode = data.copy() 
-
-    expire = datetime.now(timezone.utc) + timedelta(
-        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
-    )
-
-    to_encode.update({"exp": expire})
-
-    encoded_jwt = jwt.encode(
-        to_encode,
-        SECRET_KEY,
-        algorithm= ALGORITHM
-    )
-
-    return encoded_jwt
-
-def get_current_user(
-    token: str = Depends(oauth2_scheme)
-):
-
-    try:
-
-        payload = jwt.decode(
-            token,
-            SECRET_KEY,
-            algorithms=[ALGORITHM]
-        )
-
-        user_id = payload.get("user_id")
-
-        email = payload.get("email")
-
-        if user_id is None:
-            raise Exception("Invalid token")
-
-        return {
-            "user_id": user_id,
-            "email": email
-        }
-
-    except JWTError:
-
-        return {
-            "message": "Token is invalid or expired"
-        }
-
-
-class UserCreate(BaseModel):
-    name: str
-    email: str
-    password : str
-
-class LoginData(BaseModel):
-    email: str
-    password: str
-
-
-
-@app.get("/profile")
-def profile(token: str = Depends(oauth2_scheme)):
-
-    user = get_current_user(token)
-
-    return{
-        "current_user" : user
-    }
-
 
 @app.get("/")
 def home():
@@ -123,150 +68,6 @@ def home():
 
         return users
 
-
-@app.post("/login")
-def login(data: OAuth2PasswordRequestForm = Depends()):
-        
-        with engine.connect() as connection:
-            
-            result = connection.execute(
-                text("SELECT * FROM users WHERE email = :email "),
-                {
-                    "email": data.username
-                }
-            )
-
-            user = result.mappings().first()
-
-            if user is None:
-                return {"message": "User not found"}
-            
-            if not pwd_context.verify(data.password, user["password"]):
-                return {"message": "Invalid password"}
-            
-
-
-
-            token = create_access_token(
-                {
-                    "user_id" :  user["id"],
-                    "email" : user["email"]
-                }
-            )
-
-            return {
-                "message" : "Login succeessful",
-                "access_token" : token,
-                "user": {
-                    "id": user["id"],
-                    "name": user["name"],
-                    "email": user["email"]
-                }
-            }
-
-
-@app.post("/register")
-def add_user(user: UserCreate):
-
-    with engine.connect() as connection:
-
-        result = connection.execute(
-            text("SELECT * FROM users WHERE email = :email"),
-            {
-                "email": user.email
-            }
-        )
-
-        existing_user = result.mappings().first()
-
-        if existing_user:
-            return {"message": "Email already registered"}
-
-        hashed_password = pwd_context.hash(user.password)
-
-        connection.execute(
-            text("""
-                INSERT INTO users (name, email, password)
-                VALUES (:name, :email, :password)
-            """),
-            {
-                "name": user.name,
-                "email": user.email,
-                "password": hashed_password
-            }
-        )
-
-        connection.commit()
-
-
-        result = connection.execute(
-            text("SELECT * FROM users WHERE email = :email"),
-            {
-                "email": user.email
-            }
-        )
-
-        new_user = result.mappings().first()
-
-
-        token = create_access_token(
-            {
-                "user_id": new_user["id"],
-                "email": new_user["email"]
-            }
-        )
-
-    return {
-        "message": "User registered successfully",
-        "access_token": token,
-        "user": {
-            "id": new_user["id"],
-            "name": new_user["name"],
-            "email": new_user["email"]
-        }
-    }    
-
-
-class IssueCreate(BaseModel):
-    title: str 
-    description: str 
-    category: str 
-    location: str 
-
-
-@app.post("/issues")
-def create_issue(
-    issue: IssueCreate,
-    user = Depends(get_current_user)
-):
-
-    print(user)
-
-    with engine.connect() as connection:
-    
-        connection.execute(
-            text("""
-                    INSERT INTO issues
-                    (title, description, category, location, created_by)
-
-                    VALUES
-                    (:title, :description, :category, :location, :created_by)
-                """),
-
-                {
-                    "title": issue.title,
-                    "description": issue.description,
-                    "category": issue.category,
-                    "location": issue.location,
-                    "created_by": user["user_id"]
-                }
-        )
-
-        connection.commit()
-
-        return {
-            "message": "Issue create successfully"
-        }
 
 
 @app.get("/add-complaint")
@@ -332,89 +133,7 @@ def complaints_with_users():
                 })
 
         return complaints
-    
-
-@app.get("/issues")
-def get_issues(sort: str = "newest"):
-
-    if sort == "trending":
-
-        query = """
-            SELECT * FROM issues
-            ORDER BY upvotes DESC
-        """
-
-    elif sort == "oldest":
-
-        query = """
-            SELECT * FROM issues
-            ORDER BY created_at ASC
-        """
-
-    else:
-
-        query = """
-            SELECT * FROM issues
-            ORDER BY created_at DESC
-        """
-
-    with engine.connect() as connection:
-
-        result = connection.execute(
-            text(query)
-        )
-
-        issues = []
-
-        for row in result.mappings():
-
-            issues.append({
-                "id": row["id"],
-                "title": row["title"],
-                "description": row["description"],
-                "category": row["category"],
-                "location": row["location"],
-                "status": row["status"],
-                "upvotes": row["upvotes"],
-                "created_by": row["created_by"],
-                "created_at": str(row["created_at"])
-            })
-
-        return issues
-
-@app.get("/issues/{issue_id}")
-def get_single_issue(issue_id: int):
-
-    with engine.connect() as connection:
-
-        result = connection.execute(
-            text("""
-                SELECT * FROM issues
-                WHERE id = :id
-            """),
-            {
-                "id": issue_id
-            }
-        )
-
-        issue = result.mappings().first()
-
-        if issue is None:
-            return {"message": "Issue not found"}
-
-        return {
-            "id": issue["id"],
-            "title": issue["title"],
-            "description": issue["description"],
-            "category": issue["category"],
-            "location": issue["location"],
-            "status": issue["status"],    
-            "upvotes": issue["upvotes"],
-            "created_by": issue["created_by"],
-            "created_at": str(issue["created_at"])
-        }
-    
-    
+        
 class VoteCreate(BaseModel):
     issue_id: int
 
@@ -475,78 +194,3 @@ def vote_issue(
         return{
             "message": "Vote added successfully"
         }
-
-class CommentCreate(BaseModel):
-    issue_id: int
-    comment: str
-
-@app.post("/comments")
-def add_comment(
-    data: CommentCreate,
-    token: str = Depends(oauth2_scheme)
-):
-
-    user = get_current_user(token)
-
-    with engine.connect() as connection:
-
-        connection.execute(
-            text("""
-                INSERT INTO comments
-                (issue_id, user_id, comment)
-
-                VALUES
-                (:issue_id, :user_id, :comment)
-            """),
-            {
-                "issue_id": data.issue_id,
-                "user_id": user["user_id"],
-                "comment": data.comment
-            }
-        )
-
-        connection.commit()
-
-        return {
-            "message": "Comment added"
-        }
-    
-@app.get("/comments/{issue_id}")
-def get_comments(issue_id: int):
-
-    with engine.connect() as connection:
-
-        result = connection.execute(
-            text("""
-
-                SELECT
-                    comments.id,
-                    comments.comment,
-                    comments.user_id,
-                    comments.created_at,
-                    users.name
-
-                FROM comments
-
-                JOIN users
-                ON comments.user_id = users.id
-
-                WHERE comments.issue_id = :issue_id
-            """),
-            {
-                "issue_id": issue_id
-            }
-        )
-
-        comments = []
-
-        for row in result.mappings():
-
-            comments.append({
-                "id": row["id"],
-                "comment": row["comment"],
-                "name": row["name"],
-                "created_at": str(row["created_at"])
-            })
-
-        return comments

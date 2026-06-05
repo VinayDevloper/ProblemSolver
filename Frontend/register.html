@@ -7,27 +7,177 @@
     content="width=device-width, initial-scale=1.0">
 
     <title>Register</title>
+    <style>
+                
+        body{
+            font-family:'Segoe UI', sans-serif;
+            background:#f5f5f5;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+
+        .login-card{
+            background:white;
+            padding:40px;
+            width:350px;
+            border-radius:12px;
+            box-shadow:0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .logo{
+            width:70px;
+            display:block;
+            margin:auto;
+        }
+
+        h1{
+            text-align:center;
+            color:#2563eb;
+        }
+
+        .subtitle{
+            text-align:center;
+            color:gray;
+            margin-bottom:25px;
+        }
+
+        input{
+            width:100%;
+            padding:12px;
+            margin-bottom:15px;
+            box-sizing:border-box;
+            border:1px solid #d1d5db;
+            border-radius:8px;
+            font-size:15px;
+        }
+
+        button{
+            width:100%;
+            padding:12px;
+            background:#2563eb;
+            color:white;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+        }
+
+        .footer-text{
+            text-align:center;
+            color:gray;
+            margin-top:20px;
+        }
+
+        .copyright{
+            text-align:center;
+            color:gray;
+            font-size:13px;
+            margin-top:20px;
+        }
+
+        a{
+            color:#2563eb;
+            text-decoration:none;
+            font-weight:bold;
+        }
+        input:focus{
+            outline:none;
+            border-color:#2563eb;
+        }
+
+        button:hover{
+            background:#1d4ed8;
+        }
+
+        .password-box{
+            position:relative;
+            margin-bottom:15px;
+        }
+
+        #togglePassword{
+            opacity:0.6;
+        }
+
+        #togglePassword{
+            position:absolute;
+            right:15px;
+            top:15px;
+            width:16px;
+            height:16px;
+            cursor:pointer;
+        }
+
+
+    </style>
 </head>
 
 <body>
 
-    <h1>Register</h1>
+    <div class="login-container">
 
-    <input
-    id="name"
-    placeholder="Enter name">
+    <div class="login-card">
 
-    <input
-    id="email"
-    placeholder="Enter email">
+        <img
+            src="images/Logo.png"
+            class="logo"
+        >
 
-    <input
-    id="password"
-    placeholder="Enter password">
+        <h1>CampusCoord</h1>
 
-    <button id="registerBtn">
-        Register
-    </button>
+        <p class="subtitle">
+            Create Your Account
+        </p>
+
+        <label>Full Name</label>
+
+        <input
+            id="name"
+            placeholder="Enter full name"
+        >
+
+        <label>Email Address</label>
+
+        <input
+            id="email"
+            type="email"
+            placeholder="name@university.edu"
+        >
+
+        <label>Password</label>
+
+        <div class="password-box">
+
+        <input
+            id="password"
+            type="password"
+            placeholder="Create password"
+        >
+
+        <img
+            src="images/eye.png"
+            id="togglePassword"
+        >
+
+    </div>
+
+        <button id="registerBtn">
+            Create Account
+        </button>
+
+        <p class="footer-text">
+            Already have an account?
+            <a href="login.html">Sign In</a>
+        </p>
+
+    </div>
+
+    <p class="copyright">
+        © 2026 CampusCoord. All rights reserved.
+    </p>
+
+    
+</div>
 
 
     <script>
@@ -49,6 +199,9 @@
 
                 const password =
                 document.getElementById("password").value
+
+                registerBtn.innerText = "Creating Account..."
+                registerBtn.disabled = true
 
 
                 const response = await fetch(
@@ -74,6 +227,9 @@
                 const data =
                 await response.json()
 
+                registerBtn.innerText = "Create Account"
+                registerBtn.disabled = false
+
                 console.log(data)
 
                 localStorage.setItem(
@@ -86,6 +242,28 @@
 
             }
         )
+
+        const togglePassword =
+        document.getElementById("togglePassword")
+
+        const passwordInput =
+        document.getElementById("password")
+
+        togglePassword.addEventListener(
+            "click",
+
+            function(){
+
+                if(passwordInput.type === "password"){
+                    passwordInput.type = "text"
+                }
+                else{
+                    passwordInput.type = "password"
+                }
+
+            }
+        )
+
 
     </script>
 

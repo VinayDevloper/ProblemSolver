@@ -6,7 +6,7 @@
     <style>
 
         .container{
-            padding: 40px;
+            display:flex;
         }
 
         .issue-detail{
@@ -17,6 +17,103 @@
             box-shadow: 0px 2px 5px gray;
         }
 
+        button{
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .sidebar{
+        position:fixed;
+        left:0;
+        top:0;
+
+        width:280px;
+        height:100vh;
+
+        padding:20px;
+        background:#e9ecef;
+
+        box-sizing:border-box;
+
+        display:flex;
+        flex-direction:column;
+    }
+
+    .main-content{
+        margin-left:320px;
+        padding:40px;
+    }
+
+    .logo{
+        color:#0d6efd;
+        margin-bottom:40px;
+    }
+
+    .menu-item{
+        padding:12px;
+        margin-bottom:10px;
+        border-radius:8px;
+        cursor:pointer;
+    }
+
+    .active{
+        background:#dbeafe;
+        color:#0d6efd;
+        font-weight:700;
+    }
+
+    .logout-section{
+        margin-top:auto;
+        padding-top:20px;
+        border-top:1px solid #d1d5db;
+    }
+
+    .menu-item:hover{
+        background:#dbeafe;
+        transform:translateX(4px);
+        transition:0.2s;
+    }
+
+    .logout{
+        background:#fee2e2;
+        color:#dc2626;
+        border:1px solid #fecaca;
+        font-weight:600;
+        text-align:center;
+    }
+
+    .logout:hover{
+            background:#fecaca;
+        }
+
+        button:hover{
+            background-color: #1d4ed8;
+        }
+
+        button:disabled{
+            background-color: #94a3b8;
+
+            cursor: not-allowed;
+
+            opacity: 0.7;
+        }
+
+        body{
+            font-family: Arial;
+            background-color: #f5f5f5;
+        }
+
+        #deleteProofBtn:hover{
+            background:#7f1d1d;
+        }
+
+
     </style>
 
 </head>
@@ -24,15 +121,78 @@
 
     <div class="container">
 
+        <div class="sidebar">
+
+            <h2 class="logo">
+                CampusCoord
+            </h2>
+
+            <div
+                class="menu-item"
+                id="dashboardBtn"
+            >
+                Dashboard
+            </div>
+
+            <div
+                class="menu-item"
+                id="reportIssueBtn"
+            >
+                Report Issue
+            </div>
+
+            <div class="menu-item">
+                My Issues
+            </div>
+
+            <div class="menu-item">
+                Leaderboard
+            </div>
+
+            <div class="menu-item">
+                Resolved
+            </div>
+
+            <div class="logout-section">
+
+                <div
+                    class="menu-item logout"
+                    id="logoutBtn"
+                >
+                    Logout
+                </div>
+
+            </div>
+
+        </div>
+
+
+    <div class="main-content">
+
         <div class="issue-detail">
 
             <h1 id="title"></h1>
+
+            <img
+                id="issueImage"
+                style="
+                    width:100%;
+                    max-height:350px;
+                    object-fit:cover;
+                    border-radius:10px;
+                    margin-bottom:15px;
+                "
+            />
 
             <p id="description"></p>
 
             <p id="category"></p>
 
             <p id="location"></p>
+
+            <p id="reportedBy"></p>
+
+            <p id="createdOn"></p>
 
             <p id="status"></p>
 
@@ -41,6 +201,72 @@
             <button id="upvoteBtn">
                 Upvote
             </button>
+
+            <button id="claimBtn">
+                Claim Issue
+            </button>
+
+            <p id="claimStatus"></p>    
+
+            <p id="claimedBy"></p>
+
+            <p id="deadline"></p>
+
+            <input
+                type="file"
+                id="proofFile"
+            />
+
+            <button id="uploadProofBtn">
+                Upload Proof
+            </button>
+
+            <button
+                id="deleteProofBtn"
+                style="
+                    background:#b91c1c;
+                "
+            >
+                Delete Proof
+            </button>
+
+            <h3>Proof Image</h3>
+
+            <img
+                id="proofImage"
+                style="
+                    width:100%;
+                    max-height:350px;
+                    object-fit:cover;
+                    border-radius:10px;
+                    display:none;
+                "
+            >
+
+
+            <hr>
+
+            <h3>Verification</h3>
+
+            <button onclick="verifyIssue('solved')">
+                Solved
+            </button>
+
+            <button onclick="verifyIssue('partial')">
+                Partial
+            </button>
+
+            <button onclick="verifyIssue('not solved')">
+                Not Solved
+            </button>
+
+            <div id="verificationSummary">
+            </div>
+
+            <h3 id="finalDecision"></h3>
+
+            <hr>
+
 
             <h3>Comments</h3>
 
@@ -60,6 +286,7 @@
         </div>
 
     </div>
+    </div>
     <script>    
         const params =
         new URLSearchParams(window.location.search)
@@ -73,21 +300,65 @@
             const data = await response.json()
 
             console.log(data)
+
+
             title.innerText = data.title
+
+            issueImage.src =
+            `http://127.0.0.1:8000/${data.image_url}`
 
             description.innerText = data.description
 
-            category.innerText = data.category
+            category.innerHTML =
+            `
+            <strong>Category:</strong>
 
-            issueLocation.innerText = data.location
+            <span class="category-badge">
+            ${data.category}
+            </span>
+            `
 
-            status.innerText = "Status: " + data.status
+            issueLocation.innerHTML =
+            `<strong>Location:</strong> ${data.location}`
 
-            upvotes.innerText = "Upvotes: " + data.upvotes
+            status.innerHTML =
+            `<strong>Status:</strong> ${data.status}`
+
+            if(data.status === "in_progress"){
+
+                    claimStatus.innerText =
+                    "This issue is currently claimed"
+
+                    claimBtn.disabled = true
+
+                    claimBtn.innerText = "Already Claimed"
+                }
+            else{
+
+                claimStatus.innerText = ""
+
+                claimBtn.disabled = false
+
+                claimBtn.innerText = "Claim Issue"
+            }
+
+            upvotes.innerHTML =
+            `<strong>Upvotes:</strong> ${data.upvotes}`
+
+            reportedBy.innerHTML =
+            `<strong>Reported By:</strong> ${data.creator_name}`
+
+            createdOn.innerHTML =
+            `<strong>Created On:</strong>
+            ${new Date(data.created_at).toLocaleDateString()}`                                              
+
 
         }
         const title =
         document.getElementById("title")
+
+        const issueImage =
+        document.getElementById("issueImage")
 
         const description =
         document.getElementById("description")
@@ -101,11 +372,23 @@
         const status =
         document.getElementById("status")
 
+        const reportedBy =
+        document.getElementById("reportedBy")
+
+        const createdOn =
+        document.getElementById("createdOn")
+
         const upvotes =
         document.getElementById("upvotes")
 
         const upvoteBtn =
         document.getElementById("upvoteBtn")
+
+        const claimBtn =
+        document.getElementById("claimBtn")
+
+        const claimStatus =
+        document.getElementById("claimStatus")
 
         upvoteBtn.addEventListener(
             "click",
@@ -135,9 +418,51 @@
 
                 console.log(data)
 
+            alert(data.message)
+
                 getIssueDetail()
             }
         )
+        
+
+        claimBtn.addEventListener(
+            "click",
+
+            async function(){
+
+                const token =
+                localStorage.getItem("token")
+
+                const response = await fetch(
+                    "http://127.0.0.1:8000/claim",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`
+                        },
+
+                        body: JSON.stringify({
+                            issue_id: Number(issueId)
+                        })
+                    }
+                )
+
+                const data = await response.json()
+
+                console.log(data)
+
+alert(data.message)
+
+                claimStatus.innerText =
+                data.message
+
+                getIssueDetail()
+                getClaimInfo()
+            }
+        )
+
 
         const commentInput =
         document.getElementById("commentInput")
@@ -148,10 +473,39 @@
         const commentsContainer =
         document.getElementById("commentsContainer")
 
+        const claimedBy =
+        document.getElementById("claimedBy")
+
+        const verificationSummary =
+        document.getElementById("verificationSummary")
+
+        const deadline =
+        document.getElementById("deadline")
+
+        const proofImage =
+        document.getElementById("proofImage")
+
+        const proofFile =
+        document.getElementById("proofFile")
+
+        const uploadProofBtn =
+        document.getElementById("uploadProofBtn")
+
+        const deleteProofBtn =
+        document.getElementById("deleteProofBtn")
+
+
         commentBtn.addEventListener(
             "click",
 
             async function(){
+
+                if(commentInput.value.trim() === ""){
+
+                alert("Comment cannot be empty")
+
+                return
+            }
 
                 const token =
                 localStorage.getItem("token")
@@ -177,14 +531,58 @@
 
                 console.log(data)
 
+                alert(data.message)
+
+
                 commentInput.value = ""
 
                 getComments()
             }
         )
 
-        getIssueDetail()
-        getComments()
+
+        function getTimeAgo(dateString){
+
+        const now = new Date()
+
+        const created = new Date(dateString)
+
+        const seconds =
+        Math.floor((now - created) / 1000)
+
+        const minutes =
+        Math.floor(seconds / 60)
+
+        const hours =
+        Math.floor(minutes / 60)
+
+        const days =
+        Math.floor(hours / 24)
+
+        const months =
+        Math.floor(days / 30)
+
+        if(months > 0){
+            return months + " month ago"
+        }
+
+        if(days > 0){
+            return days + " day ago"
+        }
+
+        if(hours > 0){
+            return hours + " hour ago"
+        }
+
+        if(minutes > 0){
+            return minutes + " min ago"
+        }
+
+        return "Just now"
+    }
+
+
+
 
         async function getComments(){
 
@@ -209,15 +607,274 @@
                         "
                     >
 
-                        <h4>${comment.name}</h4>
+                        <h4 style="margin-bottom:5px;">
+                            ${comment.name}
+                        </h4>
 
-                        <p>${comment.comment}</p>
+                        <p style="color:#444;">
+                            ${comment.comment}
+                        </p>
+
+                        <p
+                        style="
+                        font-size:12px;
+                        color:gray;
+                        margin-top:5px;
+                        "
+                        >   
+                        ${getTimeAgo(comment.created_at)}
+                        </p>
 
                     </div>
 
                 `
             }
         }
+
+        async function getClaimInfo(){
+
+            const response = await fetch(
+                `http://127.0.0.1:8000/claims/${issueId}`
+            )
+
+            const data = await response.json()
+
+            console.log(data)
+
+            if(data.claimed_by){
+
+                claimedBy.innerHTML =
+                `<strong>Claimed By:</strong> ${data.claimed_by}`
+
+                const formattedDate =
+                new Date(data.deadline).toLocaleString()
+
+                deadline.innerHTML =
+                `<strong>Deadline:</strong> ${formattedDate}`
+
+                if(data.proof_image_url){
+
+                    proofImage.src =
+                    `http://127.0.0.1:8000/${data.proof_image_url}?t=${Date.now()}`
+
+                    proofImage.style.display = "block"
+
+                    deleteProofBtn.style.display = "inline-block"
+                }
+                else{
+
+                    proofImage.style.display = "none"
+
+                    deleteProofBtn.style.display = "none"
+                }
+            }
+        }
+
+
+    async function getVerificationSummary(){
+
+        const response = await fetch(
+            `http://127.0.0.1:8000/verification/${issueId}`
+        )
+
+        const data = await response.json()
+
+        const totalVotes =
+            data.solved +
+            data.partial +
+            data["not solved"]
+
+            const solvedPercentage =
+            (data.solved / totalVotes) * 100
+
+            const finalDecision =
+                document.getElementById("finalDecision")
+
+                if(totalVotes >= 5){
+
+                    if(solvedPercentage >= 60){
+
+                        finalDecision.innerText =
+                        "Community Status: Solved"
+
+                        finalDecision.style.color = "green"
+                    }
+
+                    else{
+
+                        finalDecision.innerText =
+                        "Community Status: Pending"
+
+                        finalDecision.style.color = "orange"
+                    }
+
+                }
+                else{
+
+                    finalDecision.innerText =
+                    "Need at least 5 verification votes"
+
+                    finalDecision.style.color = "red"
+                }
+
+
+        verificationSummary.innerHTML = `
+
+            <p>
+                Solved: ${data.solved}
+            </p>
+
+            <p>
+                Partial: ${data.partial}
+            </p>
+
+            <p>
+                Not Solved: ${data["not solved"]}
+            </p>
+
+        `
+}
+
+        async function verifyIssue(status){
+
+            const token =
+            localStorage.getItem("token")
+
+            const response = await fetch(
+                "http://127.0.0.1:8000/verify",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+
+                    body: JSON.stringify({
+                        issue_id: Number(issueId),
+                        status: status
+                    })
+                }
+            )
+
+            const data = await response.json()
+
+            console.log(data)
+
+        alert(data.message)
+
+            getVerificationSummary()
+        }
+
+        uploadProofBtn.addEventListener(
+            "click",
+
+                
+
+            async function(){
+
+                if(claimBtn.disabled === false){
+
+                    alert("Please claim issue first")
+                    return
+                }
+
+                const file =
+                proofFile.files[0]
+
+                if(!file){
+
+                    alert("Choose image first")
+                    return
+                }
+
+                const formData =
+                new FormData()
+
+                formData.append(
+                    "file",
+                    file
+                )
+
+                const response = await fetch(
+                    `http://127.0.0.1:8000/upload-proof?issue_id=${issueId}`,
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                )
+
+                const data =
+                await response.json()
+
+                alert("Proof uploaded")
+
+                getClaimInfo()
+            }
+        )
+
+
+        deleteProofBtn.addEventListener(
+            "click",
+
+            async function(){
+
+                const response = await fetch(
+                    `http://127.0.0.1:8000/delete-proof/${issueId}`,
+                    {
+                        method: "DELETE"
+                    }
+                )
+
+                const data = await response.json()
+
+                alert(data.message)
+
+                getClaimInfo()
+            }
+        )
+
+        getIssueDetail()
+        getComments()
+        getClaimInfo()
+        getVerificationSummary()
+
+
+        const logoutBtn =
+        document.getElementById("logoutBtn")
+
+        logoutBtn.addEventListener(
+            "click",
+            function(){
+
+                localStorage.removeItem("token")
+                window.location.href = "login.html"
+            }
+        )
+
+        const reportIssueBtn =
+        document.getElementById("reportIssueBtn")
+
+        reportIssueBtn.addEventListener(
+            "click",
+            function(){
+                window.location.href =
+                "report-issue.html"
+            }
+        )
+
+
+        const dashboardBtn =
+        document.getElementById("dashboardBtn")
+
+        dashboardBtn.addEventListener(
+            "click",
+            function(){
+                window.location.href =
+                "dashboard.html"
+            }
+        )
+
     </script>
 </body>
 </html>

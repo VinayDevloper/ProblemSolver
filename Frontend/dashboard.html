@@ -7,16 +7,107 @@
     <style>
         .container{
             display: flex;
-            padding: 20px;
         }
         .sidebar{
-            width: 250px;
-            padding: 20px;
-            background-color: #e9ecef;
-            height: 100vh;
+            position:fixed;
+            left:0;
+            top:0;
+
+            width:280px;
+            height:100vh;
+
+            padding:20px;
+            background:#e9ecef;
+
+            display:flex;
+            flex-direction:column;
         }
+
+        .category-badge{
+            background:#dbeafe;
+            color:#2563eb;
+
+            padding:6px 12px;
+            border-radius:20px;
+
+            font-size:13px;
+            font-weight:600;
+        }
+
+        .status-open{
+            background:#dcfce7;
+            color:#166534;
+        }
+
+        .status-progress{
+            background:#fef3c7;
+            color:#92400e;
+        }
+
+        .status-resolved{
+            background:#dbeafe;
+            color:#1d4ed8;
+        }
+
+        .logo{
+            margin-bottom:40px;
+            color:#0d6efd;
+        }
+
+        .menu-item{
+            padding:12px;
+            margin-bottom:10px;
+            border-radius:8px;
+            cursor:pointer;
+            font-weight:500;
+        }
+
+        .issue-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+
+            margin-bottom:15px;
+        }
+
+        .menu-item:hover{
+            background:#dbeafe;
+            transform:translateX(4px);
+            transition:0.2s;
+        }
+
+        .active{
+            background:#dbeafe;
+            color:#0d6efd;
+
+            font-weight:700;
+            box-shadow:none;
+        }
+
+        
+        .logout{
+            background:#fee2e2;
+            color:#dc2626;
+            border:1px solid #fecaca;
+            font-weight:600;
+
+            text-align:center;
+            padding-left:12px;
+        }
+
+        .logout:hover{
+            background:#fecaca;
+            
+        }
+        .logout-section{
+            margin-top:auto;
+            padding-top:20px;
+            border-top:1px solid #d1d5db;
+        }
+
         .main-content{
-            padding: 20px;
+            margin-left:320px;
+            padding: 30px;
         }   
         body{
             margin: 0;
@@ -24,13 +115,18 @@
             background-color: #f5f5f5;
         }
         .issue-card{
-            padding: 20px;
-            background-color: white;
-            border: 1px solid gray;
-            border-radius: 10px;
-            width: 400px;
-            box-shadow: 0px 2px 5px gray;
-            margin-bottom: 20px;
+            width: 800px;
+
+            padding:25px;
+
+            background:white;
+            border:none;
+
+            border-radius:14px;
+
+            box-shadow:0 2px 12px rgba(0,0,0,0.08);
+
+            margin-bottom:25px;
         }
         button{
             background-color: blue;
@@ -42,11 +138,14 @@
         }
 
         .top-bar{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 450px;
-            margin-bottom: 20px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+
+            width:100%;
+            max-width:850px;
+
+            margin-bottom:20px;
         }
 
         #sortSelect{
@@ -73,18 +172,69 @@
             border-color: blue;
         }
 
+        
 
+        .logout-section{
+            margin-top:auto;
+            padding-bottom:20px;
+        }
+
+        .status-badge{
+            display:inline-block;
+
+            padding:6px 12px;
+
+            border-radius:20px;
+
+            font-size:14px;
+            font-weight:600;
+        }
 
     </style>
 </head>
 <body>
     <div class="container">
-        <div class ="sidebar">
-            <h2>Dashboard</h2>
-            <p>Report Issue</p>
-            <p>Profile</p>
-            <p id="logoutBtn">Logout</p>
+        <div class="sidebar">
+
+        <h2 class="logo">
+            CampusCoord
+        </h2>
+
+        <div class="menu-item active">
+            Dashboard
         </div>
+
+        <div
+            class="menu-item"
+            id="reportIssueBtn"
+        >
+            Report Issue
+        </div>
+
+        <div class="menu-item">
+            My Issues
+        </div>
+
+        <div class="menu-item">
+            Leaderboard
+        </div>
+
+        <div class="menu-item">
+            Resolved
+        </div>
+
+        <div class="logout-section">
+
+    <div
+        class="menu-item logout"
+        id="logoutBtn"
+    >
+        Logout
+    </div>
+
+</div>
+
+    </div>
         <div class="main-content">
 
         <div class="top-bar">
@@ -133,26 +283,184 @@
             const data = await response.json()
             issuesContainer.innerHTML = ""
 
-            for(let issue of data){
+            for(let issue of data)
+            {
+
+                let statusText = issue.status
+
+                    if(issue.status === "in_progress"){
+                        statusText = "In Progress"
+                    }
+
+                    if(issue.status === "resolved"){
+                        statusText = "Resolved"
+                    }
+
+                    if(issue.status === "open"){
+                        statusText = "Open"
+                    }
+                
+                    let statusClass = "status-open"
+
+                    if(issue.status === "in_progress"){
+                        statusText = "In Progress"
+                        statusClass = "status-progress"
+                    }
+
+                    if(issue.status === "resolved"){
+                        statusText = "Resolved"
+                        statusClass = "status-resolved"
+                    }
+
+                    if(issue.status === "open"){
+                        statusText = "Open"
+                        statusClass = "status-open"
+                    }
+
                 issuesContainer.innerHTML += `
-                    <div class="issue-card">
+                <div class="issue-card">
 
-                        <h3>${issue.title}</h3>
+                        <div class="issue-header">
 
-                        <p>${issue.description}</p>
+                            <h3>${issue.title}</h3>
 
-                        <p>Category: ${issue.category}</p>
+                            <span class="status-badge ${statusClass}">
+                                ${statusText}
+                            </span>
 
-                        <p>Location: ${issue.location}</p>
+                        </div>
+
+                        <p>
+                            ${issue.description.substring(0, 100)}...
+                        </p>
+
+                        <p>
+    <b>Category:</b>
+
+    <span class="category-badge">
+        ${issue.category}
+    </span>
+</p>
+
+                        <p>
+                            <b>Location:</b> ${issue.location}
+                        </p>
+
+                        <p
+                        style="
+                        color:gray;
+                        font-size:14px;
+                        margin-top:-5px;
+                        "
+                        >
+                        ${getTimeAgo(issue.created_at)}
+                        </p>
+
+                        
+
+                    <div style="
+                    display:flex;
+                    gap:20px;
+                    margin:15px 0;
+                    ">
+
+                        <span
+                        onclick="voteIssue(${issue.id})"
+                        style="
+                        display:flex;
+                        align-items:center;
+                        gap:6px;
+                        cursor:pointer;
+                        "
+                        >
+
+                        <img
+                            src="images/Upvote.png"
+                            width="22"
+                            height="22"
+                        >
+
+                        ${issue.upvotes}
+
+                        </span>
+
+                        <span
+                        style="
+                        display:flex;
+                        align-items:center;
+                        gap:6px;
+                        "
+                        >
+
+                        <img
+                            src="images/Comment.png"
+                            width="22"
+                            height="22"
+                        >
+
+                        ${issue.comment_count}
+
+                        </span>
+
+
+                    </div>
 
                         <button onclick="openIssueDetail(${issue.id})">
                             View Details
                         </button>
 
-    </div>
-`
+                    </div>
+                    
+                    `
             }
+            
         }
+
+        function getTimeAgo(dateString){
+
+        const now = new Date()
+
+        const created = new Date(dateString)
+
+        const seconds =
+        Math.floor(
+            (now - created) / 1000
+        )
+
+        const minutes =
+        Math.floor(seconds / 60)
+
+        const hours =
+        Math.floor(minutes / 60)
+
+        const days =
+        Math.floor(hours / 24)
+
+        const months =
+        Math.floor(days / 30)
+
+        if(months > 0){
+            return months + " month ago"
+        }
+
+        if(days > 0){
+            return days + " day ago"
+        }
+
+        if(hours > 0){
+            return hours + " hour ago"
+        }
+
+        if(minutes > 0){
+            return minutes + " min ago"
+        }
+
+        return "Just now"
+    }
+
+
+
+
         function openIssueDetail(issueId){
             window.location.href =
             `issue-detail.html?id=${issueId}`
@@ -180,6 +488,54 @@
                     window.location.href = "login.html"
                 }
         )
+
+        const reportIssueBtn =
+        document.getElementById("reportIssueBtn")
+
+        reportIssueBtn.addEventListener(
+            "click",
+
+            function(){
+
+                window.location.href =
+                "report-issue.html"
+            }
+        )
+
+        async function voteIssue(issueId){
+
+        const token =
+        localStorage.getItem("token")
+
+        const response =
+        await fetch(
+            "http://127.0.0.1:8000/vote",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":"application/json",
+                    "Authorization":
+                    `Bearer ${token}`
+                },
+
+                body:JSON.stringify({
+                    issue_id:issueId
+                })
+            }
+        )
+
+        const data =
+        await response.json()
+
+        alert(data.message)
+
+        getIssues()
+    }
+
+
     </script>
+
+    
 </body>
 </html>
