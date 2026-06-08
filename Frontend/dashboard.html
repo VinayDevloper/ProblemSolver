@@ -22,6 +22,36 @@
             display:flex;
             flex-direction:column;
         }
+        .filters{
+            display:flex;
+            gap:12px;
+            margin-left:auto;
+        }
+
+        /* FIX 3: Unified dropdown style for both selects */
+        #categorySelect,
+        #sortSelect{
+            padding: 10px 35px 10px 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            background: white;
+            min-width: 150px;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 20px;
+            transition: border-color 0.2s;
+        }
+
+        #categorySelect:hover,
+        #sortSelect:hover{
+            border-color: blue;
+        }
 
         .category-badge{
             background:#dbeafe;
@@ -99,6 +129,16 @@
             background:#fecaca;
             
         }
+
+        /* FIX 1: rightSidebar width matches contributor/trending cards */
+        #rightSidebar{
+            width:280px;
+            flex-shrink:0;
+            position:sticky;
+            top:20px;
+            align-self:flex-start;
+        }
+
         .logout-section{
             margin-top:auto;
             padding-top:20px;
@@ -109,13 +149,65 @@
             margin-left:320px;
             padding: 30px;
         }   
+
+        .content-wrapper{
+            display:flex;
+            gap:25px;
+            align-items:flex-start;
+            width:100%;
+        }
+
+        /* FIX 1: contributorsBox and trendingCategoriesBox both fill sidebar width */
+        #contributorsBox,
+        #trendingCategoriesBox{
+            width:100%;
+            box-sizing:border-box;
+        }
+
+        #issues-container{
+            flex:1;
+            min-width:0;
+        }
+
+        .contributor-card{
+            background:white;
+            border-radius:12px;
+            padding:20px;
+            box-shadow:0 2px 12px rgba(0,0,0,0.08);
+            box-sizing:border-box;
+            width:100%;
+        }
+
+        .contributor-item{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:15px;
+        }
+
+        .avatar{
+            width:40px;
+            height:40px;
+            border-radius:50%;
+            background:#dbeafe;
+            color:#2563eb;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            font-weight:bold;
+        }
+
         body{
             margin: 0;
             font-family: Arial;
             background-color: #f5f5f5;
         }
         .issue-card{
-            width: 800px;
+            /* width:100%; */
+            max-width:none;
+            box-sizing:border-box;
+            width:800px;
+            flex:1;
 
             padding:25px;
 
@@ -143,36 +235,9 @@
             align-items:center;
 
             width:100%;
-            max-width:850px;
 
-            margin-bottom:20px;
+            margin-bottom:25px;
         }
-
-        #sortSelect{
-            padding: 10px 35px 10px 15px;
-            border-radius: 10px;
-            border: 1px solid lightgray;
-            background-color: white;
-            font-size: 16px;
-            cursor: pointer;
-            outline: none;
-            appearance: none;
-            -webkit-appearance: none;
-
-            background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-
-            background-repeat: no-repeat;
-
-            background-position: right 10px center;
-
-            background-size: 20px;
-        }
-
-        #sortSelect:hover{
-            border-color: blue;
-        }
-
-        
 
         .logout-section{
             margin-top:auto;
@@ -188,6 +253,39 @@
 
             font-size:14px;
             font-weight:600;
+
+            white-space:nowrap;
+        }
+
+        /* FIX 2: Empty state styling */
+        .empty-state{
+            width:800px;   /* same as issue-card */
+            box-sizing:border-box;
+
+            text-align:center;
+            padding:60px 20px;
+            background:white;
+            border-radius:14px;
+            box-shadow:0 2px 12px rgba(0,0,0,0.08);
+            color:#6b7280;
+        }
+        .issue-card,
+        .empty-state{
+            width:800px;
+            box-sizing:border-box;
+        }
+        .empty-state .empty-icon{
+            font-size:48px;
+            margin-bottom:16px;
+        }
+        .empty-state h3{
+            margin:0 0 8px;
+            color:#374151;
+            font-size:18px;
+        }
+        .empty-state p{
+            margin:0;
+            font-size:14px;
         }
 
     </style>
@@ -211,15 +309,24 @@
             Report Issue
         </div>
 
-        <div class="menu-item">
-            My Issues
+        <div
+            class="menu-item"
+            id="myProfileBtn"
+        >
+            My Profile
         </div>
 
-        <div class="menu-item">
+        <div
+            class="menu-item"
+            id="leaderboardBtn"
+        >
             Leaderboard
         </div>
 
-        <div class="menu-item">
+        <div
+            class="menu-item"
+            id="resolvedBtn"
+        >
             Resolved
         </div>
 
@@ -237,31 +344,125 @@
     </div>
         <div class="main-content">
 
-        <div class="top-bar">
+            
+            <div class="top-bar">
 
-            <h1>Active Issues</h1>
+                
+                <h1
+                style="
+                margin:0;
+                white-space:nowrap;
+                "
+                >
+                Active Issues
+                </h1>
+                
+                <div class="filters">
 
-            <select id="sortSelect">
+    <select id="sortSelect">
 
-                <option value="newest">
-                    Newest
-                </option>
+        <option value="newest">
+            Newest
+        </option>
 
-                <option value="oldest">
-                    Oldest
-                </option>
+        <option value="oldest">
+            Oldest
+        </option>
 
-                <option value="trending">
-                    Trending
-                </option>
+        <option value="trending">
+            Trending
+        </option>
 
-            </select>
+    </select>
+
+    <select id="categorySelect">
+
+            <option value="">
+                All Categories
+            </option>
+
+            <option value="Infrastructure">
+                Infrastructure
+            </option>
+
+            <option value="Electrical">
+                Electrical
+            </option>
+
+            <option value="Water">
+                Water
+            </option>
+
+            <option value="Cleanliness">
+                Cleanliness
+            </option>
+
+            <option value="Hostel">
+                Hostel
+            </option>
+
+            <option value="Mess">
+                Mess
+            </option>
+
+            <option value="WiFi">
+                WiFi
+            </option>
+
+            <option value="Academics">
+                Academics
+            </option>
+
+            <option value="Placements">
+                Placements
+            </option>
+
+            <option value="Exam Department">
+                Exam Department
+            </option>
+
+            <option value="Environment">
+                Environment
+            </option>
+
+            <option value="Animal">
+                Animal
+            </option>
+
+            <option value="Events">
+                Events
+            </option>
+
+            <option value="Emergency Help">
+                Emergency Help
+            </option>
+
+            <option value="Safety">
+                Safety
+            </option>
+
+        </select>
+
         </div>
 
-        <div id="issues-container">
-                
-            </div>
+        </div>
+
+        <div class="content-wrapper">
         
+        <div id="issues-container">        
+        </div>
+
+        <div id="rightSidebar">
+
+            <div id="trendingCategoriesBox"></div>
+
+            <br>
+
+            <div id="contributorsBox"></div>
+
+        </div>
+        
+        </div>
     </div>
 
     <script>
@@ -276,47 +477,47 @@
         const sortSelect =
         document.getElementById("sortSelect")
 
+        const categorySelect =
+        document.getElementById("categorySelect")
+
         async function getIssues(){
             const response = await fetch(
                 `http://127.0.0.1:8000/issues?sort=${sortSelect.value}`
             )
             const data = await response.json()
             issuesContainer.innerHTML = ""
+            let foundIssue = false
 
             for(let issue of data)
             {
 
+                if(
+                    categorySelect.value !== "" &&
+                    issue.category !== categorySelect.value
+                ){
+                    continue
+                }
+                console.log(issue.id, issue.title, issue.status)
+
                 let statusText = issue.status
+                let statusClass = "status-open"
 
-                    if(issue.status === "in_progress"){
-                        statusText = "In Progress"
-                    }
+                if(issue.status === "in_progress"){
+                    statusText = "In Progress"
+                    statusClass = "status-progress"
+                }
 
-                    if(issue.status === "resolved"){
-                        statusText = "Resolved"
-                    }
+                if(issue.status === "resolved"){
+                    statusText = "Resolved"
+                    statusClass = "status-resolved"
+                }
 
-                    if(issue.status === "open"){
-                        statusText = "Open"
-                    }
-                
-                    let statusClass = "status-open"
+                if(issue.status === "open"){
+                    statusText = "Open"
+                    statusClass = "status-open"
+                }
 
-                    if(issue.status === "in_progress"){
-                        statusText = "In Progress"
-                        statusClass = "status-progress"
-                    }
-
-                    if(issue.status === "resolved"){
-                        statusText = "Resolved"
-                        statusClass = "status-resolved"
-                    }
-
-                    if(issue.status === "open"){
-                        statusText = "Open"
-                        statusClass = "status-open"
-                    }
-
+                foundIssue = true
                 issuesContainer.innerHTML += `
                 <div class="issue-card">
 
@@ -348,8 +549,9 @@
 
                         <p
                         style="
-                        color:gray;
-                        font-size:14px;
+                        color:#2563eb;
+                        font-size:15px;
+                        font-weight:600;
                         margin-top:-5px;
                         "
                         >
@@ -413,6 +615,18 @@
                     
                     `
             }
+
+            // FIX 2: Show empty state if no issues found for selected category
+            if(!foundIssue){
+                const categoryLabel = categorySelect.value || "this filter"
+                issuesContainer.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <h3>No issues found</h3>
+                    <p>There are no active issues under <b>${categoryLabel}</b> right now.</p>
+                </div>
+                `
+            }
             
         }
 
@@ -460,12 +674,136 @@
 
 
 
+    async function getTrendingCategories(){
+
+            const response =
+            await fetch(
+                "http://127.0.0.1:8000/trending-categories"
+            )
+
+            const data =
+            await response.json()
+
+            const box =
+            document.getElementById(
+                "trendingCategoriesBox"
+            )
+
+            box.innerHTML = `
+
+                <div class="contributor-card">
+
+                    <h3>
+                        Trending Categories
+                    </h3>
+
+                    ${
+                        data.map(category => `
+
+                        <div
+                            style="
+                            display:flex;
+                            justify-content:space-between;
+                            align-items:center;
+                            margin-bottom:15px;
+                            "
+                        >
+
+                            <span>
+                                ${category.category}
+                            </span>
+
+                            <span
+                                style="
+                                color:#2563eb;
+                                font-size:15px;
+                                font-weight:600;
+                                "
+                            >
+                                ${category.total} Active
+                            </span>
+
+                        </div>
+
+                        `).join("")
+                    }
+
+                </div>
+            `
+        }
+
+    async function getTopContributors(){
+
+        const response =
+        await fetch(
+            "http://127.0.0.1:8000/top-contributors"
+        )
+
+        const data =
+        await response.json()
+
+        const box =
+        document.getElementById(
+            "contributorsBox"
+        )
+
+        box.innerHTML = `
+
+            <div class="contributor-card">
+
+                <h3>
+                    Top Contributors
+                </h3>
+
+                ${
+                    data.map(user => `
+
+                    <div class="contributor-item">
+
+                        <div style="
+                        display:flex;
+                        align-items:center;
+                        gap:10px;
+                        ">
+
+                            <div class="avatar">
+
+                                ${user.name[0].toUpperCase()}
+
+                            </div>
+
+                            <div>
+
+                                ${user.name}
+
+                            </div>
+
+                        </div>
+
+                        <b>
+                            ${user.resolved_count}
+                        </b>
+
+                    </div>
+
+                    `).join("")
+                }
+
+            </div>
+        `
+    }
+
+
 
         function openIssueDetail(issueId){
             window.location.href =
             `issue-detail.html?id=${issueId}`
         }
+
         getIssues()
+        getTrendingCategories()
+        getTopContributors()
+
 
         sortSelect.addEventListener(
             "change",
@@ -475,7 +813,13 @@
                 getIssues()
             }
         )
-
+        
+        categorySelect.addEventListener(
+            "change",
+            function(){
+                getIssues()
+            }
+        )
 
         const logoutBtn =
         document.getElementById("logoutBtn")
@@ -501,6 +845,47 @@
                 "report-issue.html"
             }
         )
+
+        const myProfileBtn =
+        document.getElementById("myProfileBtn")
+
+        myProfileBtn.addEventListener(
+            "click",
+            function(){
+
+                window.location.href =
+                "My_profile.html"
+            }
+        )
+        
+
+
+        const leaderboardBtn =
+        document.getElementById("leaderboardBtn")
+
+        leaderboardBtn.addEventListener(
+            "click",
+            function(){
+
+                window.location.href =
+                "leaderboard.html"
+            }
+        )
+
+        const resolvedBtn =
+        document.getElementById("resolvedBtn")
+
+        resolvedBtn.addEventListener(
+            "click",
+
+            function(){
+
+                window.location.href =
+                "resolved.html"
+            }
+        )
+
+
 
         async function voteIssue(issueId){
 
@@ -531,6 +916,7 @@
         alert(data.message)
 
         getIssues()
+        getTopContributors()
     }
 
 

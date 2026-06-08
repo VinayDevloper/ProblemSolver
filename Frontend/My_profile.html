@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile</title>
+<style>
+*{box-sizing:border-box;}
+body{margin:0;font-family:Arial;background:#f5f5f5;}
+.container{display:flex;}
+.sidebar{position:fixed;left:0;top:0;width:280px;height:100vh;padding:20px;background:#e9ecef;display:flex;flex-direction:column;}
+.logo{color:#0d6efd;margin-bottom:40px;}
+.menu-item{padding:12px;margin-bottom:10px;border-radius:8px;cursor:pointer;font-weight:500;}
+.menu-item:hover{background:#dbeafe;transform:translateX(4px);transition:0.2s;}
+.active{background:#dbeafe;color:#0d6efd;font-weight:700;}
+.logout{background:#fee2e2;color:#dc2626;border:1px solid #fecaca;font-weight:600;text-align:center;}
+.logout:hover{background:#fecaca;}
+.logout-section{margin-top:auto;padding-top:20px;border-top:1px solid #d1d5db;}
+.main-content{margin-left:320px;padding:40px;max-width:900px;}
+
+/* Profile Header */
+.profile-header{background:white;border-radius:16px;padding:30px;box-shadow:0 2px 16px rgba(0,0,0,0.08);margin-bottom:24px;display:flex;align-items:center;gap:24px;}
+.avatar-big{width:80px;height:80px;border-radius:50%;background:#dbeafe;color:#2563eb;display:flex;justify-content:center;align-items:center;font-size:32px;font-weight:700;flex-shrink:0;}
+.profile-header-info h2{margin:0 0 4px;font-size:22px;color:#111827;}
+.profile-header-info p{margin:0;color:#6b7280;font-size:14px;}
+.role-badge{display:inline-block;background:#dbeafe;color:#2563eb;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;margin-top:6px;}
+
+/* Cards */
+.section-card{background:white;border-radius:16px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,0.08);margin-bottom:24px;}
+.section-card h3{margin:0 0 20px;font-size:17px;color:#111827;display:flex;align-items:center;gap:8px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group.full{grid-column:1/-1;}
+label{font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;}
+input,select,textarea{padding:11px 14px;border:1px solid #d1d5db;border-radius:10px;font-size:14px;background:white;outline:none;font-family:Arial;transition:border-color 0.2s;width:100%;}
+input:focus,select:focus,textarea:focus{border-color:#2563eb;}
+textarea{resize:vertical;min-height:90px;}
+select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");background-repeat:no-repeat;background-position:right 10px center;background-size:20px;padding-right:36px;}
+
+/* Tags */
+.tags-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;}
+.tag{padding:8px 16px;border:1.5px solid #d1d5db;border-radius:20px;font-size:13px;cursor:pointer;background:white;transition:all 0.15s;}
+.tag.selected{background:#2563eb;color:white;border-color:#2563eb;}
+
+/* Save button */
+.save-btn{background:#2563eb;color:white;border:none;padding:12px 32px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;transition:background 0.2s;}
+.save-btn:hover{background:#1d4ed8;}
+.btn-row{display:flex;gap:12px;justify-content:flex-end;margin-top:8px;}
+.skip-btn{background:white;color:#374151;border:1px solid #d1d5db;padding:12px 32px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;}
+.skip-btn:hover{background:#f9fafb;}
+
+/* My Issues */
+.issue-card{background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:18px 20px;margin-bottom:14px;cursor:pointer;transition:box-shadow 0.15s;}
+.issue-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+.issue-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.issue-title{font-size:15px;font-weight:700;color:#111827;margin:0;}
+.status-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;}
+.status-open{background:#dcfce7;color:#166534;}
+.status-progress{background:#fef3c7;color:#92400e;}
+.status-resolved{background:#dbeafe;color:#1d4ed8;}
+.issue-meta{font-size:13px;color:#6b7280;display:flex;gap:16px;flex-wrap:wrap;}
+.category-badge{background:#dbeafe;color:#2563eb;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+.empty-state{text-align:center;padding:40px;color:#9ca3af;}
+.empty-state .ei{font-size:40px;margin-bottom:12px;}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="sidebar">
+    <h2 class="logo">CampusCoord</h2>
+    <div class="menu-item" id="dashboardBtn">Dashboard</div>
+    <div class="menu-item" id="reportIssueBtn">Report Issue</div>
+    <div class="menu-item active">My Profile</div>
+    <div class="menu-item" id="leaderboardBtn">Leaderboard</div>
+    <div class="menu-item" id="resolvedBtn">Resolved</div>
+    <div class="logout-section">
+      <div class="menu-item logout" id="logoutBtn">Logout</div>
+    </div>
+  </div>
+
+  <div class="main-content">
+
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="avatar-big" id="avatarBig">?</div>
+      <div class="profile-header-info">
+        <h2 id="headerName">Loading...</h2>
+        <p id="headerEmail"></p>
+        <span class="role-badge" id="headerRole">Student</span>
+      </div>
+    </div>
+
+    <!-- Basic Info -->
+    <div class="section-card">
+      <h3>ℹ️ Basic Info</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input id="name" placeholder="e.g. Alex Johnson">
+        </div>
+        <div class="form-group">
+          <label>College Email</label>
+          <input id="email" type="email" placeholder="alex.j@university.edu" readonly style="background:#f9fafb;color:#6b7280;">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input id="phone" placeholder="+91 00000 00000">
+        </div>
+        <div class="form-group">
+          <label>Department</label>
+          <select id="department">
+            <option value="">Select Department</option>
+            <option>Computer Engineering</option>
+            <option>Information Technology</option>
+            <option>Mechanical Engineering</option>
+            <option>Civil Engineering</option>
+            <option>Electrical Engineering</option>
+            <option>Electronics & Telecom</option>
+            <option>Chemical Engineering</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Year</label>
+          <select id="year">
+            <option value="">Select Year</option>
+            <option>1st Year</option>
+            <option>2nd Year</option>
+            <option>3rd Year</option>
+            <option>4th Year</option>
+            <option>Faculty</option>
+            <option>Staff</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Role Selection -->
+    <div class="section-card">
+      <h3>💼 Role Selection</h3>
+      <div class="form-group">
+        <label>What best describes you?</label>
+        <select id="role">
+          <option value="Student">Student</option>
+          <option value="Student Volunteer">Student Volunteer</option>
+          <option value="Student Representative">Student Representative</option>
+          <option value="Faculty">Faculty</option>
+          <option value="Staff">Staff</option>
+          <option value="Maintenance Staff">Maintenance Staff</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Group Affiliation -->
+    <div class="section-card">
+      <h3>👥 Group Affiliation</h3>
+      <div class="form-group">
+        <label>Are you part of any group? (Optional)</label>
+        <select id="group">
+          <option value="None">None</option>
+          <option value="ABVP">ABVP</option>
+          <option value="NSUI">NSUI</option>
+          <option value="NCC">NCC</option>
+          <option value="NSS">NSS</option>
+          <option value="MNSI">MNSI</option>
+          <option value="Yuva Sena">Yuva Sena</option>
+          <option value="Student Council">Student Council</option>
+        </select>
+        <small style="color:#2563eb;font-size:12px;margin-top:6px;">This helps students find the right people faster.</small>
+      </div>
+    </div>
+
+    <!-- Help Categories -->
+    <div class="section-card">
+      <h3>🏷️ Help Categories</h3>
+      <p style="font-size:13px;color:#6b7280;margin:0 0 12px;">What can you help with?</p>
+      <div class="tags-row" id="tagsRow">
+        <span class="tag" onclick="toggleTag(this)">Hostel</span>
+        <span class="tag" onclick="toggleTag(this)">Mess</span>
+        <span class="tag" onclick="toggleTag(this)">WiFi</span>
+        <span class="tag" onclick="toggleTag(this)">Water</span>
+        <span class="tag" onclick="toggleTag(this)">Cleanliness</span>
+        <span class="tag" onclick="toggleTag(this)">Academics</span>
+        <span class="tag" onclick="toggleTag(this)">Placements</span>
+        <span class="tag" onclick="toggleTag(this)">Exam Department</span>
+        <span class="tag" onclick="toggleTag(this)">Infrastructure</span>
+        <span class="tag" onclick="toggleTag(this)">Environment</span>
+        <span class="tag" onclick="toggleTag(this)">Events</span>
+        <span class="tag" onclick="toggleTag(this)">Emergency Help</span>
+      </div>
+    </div>
+
+    <!-- Bio -->
+    <div class="section-card">
+      <h3>📝 Bio</h3>
+      <textarea id="bio" placeholder="I help students with hostel and placement related issues."></textarea>
+      <div class="btn-row">
+        <button class="skip-btn" onclick="window.location.href='dashboard.html'">Skip For Now</button>
+        <button class="save-btn" id="saveProfileBtn">Save Profile</button>
+      </div>
+    </div>
+
+    <!-- My Issues -->
+    <div class="section-card">
+      <h3>📋 My Issues</h3>
+      <div id="myIssuesContainer">
+        <div class="empty-state"><div class="ei">📭</div><p>Loading your issues...</p></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let currentUserEmail = "";
+const token = localStorage.getItem("token")
+if(!token){ window.location.href = "login.html" }
+
+function toggleTag(el){ el.classList.toggle("selected") }
+
+// Load profile from localStorage if saved
+function loadProfile(email){
+  const saved = JSON.parse(
+    localStorage.getItem(`campuscoord_profile_${email}`) || "{}"
+  )
+
+  document.getElementById("phone").value = saved.phone || ""
+  document.getElementById("department").value = saved.department || ""
+  document.getElementById("year").value = saved.year || ""
+  document.getElementById("role").value = saved.role || "Student"
+  document.getElementById("group").value = saved.group || "None"
+  document.getElementById("bio").value = saved.bio || ""
+
+  document.querySelectorAll(".tag").forEach(t=>{
+    t.classList.remove("selected")
+  })
+
+  if(saved.categories){
+    document.querySelectorAll(".tag").forEach(t=>{
+      if(saved.categories.includes(t.innerText)){
+        t.classList.add("selected")
+      }
+    })
+  }
+}
+
+async function loadUserInfo(){
+  try{
+    const res = await fetch("http://127.0.0.1:8000/me", {
+      headers:{"Authorization":`Bearer ${token}`}
+    })
+    if(res.ok){
+      const data = await res.json()
+      document.getElementById("name").value = data.name || ""
+      document.getElementById("email").value = data.email || ""
+      document.getElementById("headerName").innerText = data.name || "User"
+      document.getElementById("headerEmail").innerText = data.email || ""
+      document.getElementById("avatarBig").innerText = (data.name||"U")[0].toUpperCase()
+    }
+  } catch(e){ console.log(e) }
+  loadProfile()
+  loadProfile(data.email)
+}
+
+document.getElementById("saveProfileBtn").addEventListener("click", function(){
+  const categories = []
+  document.querySelectorAll(".tag.selected").forEach(t=> categories.push(t.innerText))
+  const profile = {
+    name: document.getElementById("name").value,
+    phone: document.getElementById("phone").value,
+    department: document.getElementById("department").value,
+    year: document.getElementById("year").value,
+    role: document.getElementById("role").value,
+    group: document.getElementById("group").value,
+    bio: document.getElementById("bio").value,
+    categories
+  }
+  localStorage.setItem(
+  `campuscoord_profile_${currentUserEmail}`,
+  JSON.stringify(profile)
+)
+  document.getElementById("headerName").innerText = profile.name || "User"
+  document.getElementById("headerRole").innerText = profile.role || "Student"
+  document.getElementById("avatarBig").innerText = (profile.name||"U")[0].toUpperCase()
+  alert("Profile saved!")
+})
+
+async function getMyIssues(){
+  const container = document.getElementById("myIssuesContainer")
+  try{
+    const res = await fetch("http://127.0.0.1:8000/my-issues", {
+      headers:{"Authorization":`Bearer ${token}`}
+    })
+    const data = await res.json()
+    if(!data.length){
+      container.innerHTML = `<div class="empty-state"><div class="ei">📭</div><p>You haven't reported any issues yet.</p></div>`
+      return
+    }
+    container.innerHTML = ""
+    for(let issue of data){
+      let stLabel="Open", stClass="status-open"
+      if(issue.status==="in_progress"){stLabel="In Progress";stClass="status-progress"}
+      if(issue.status==="resolved"){stLabel="Resolved";stClass="status-resolved"}
+      const ago = getTimeAgo(issue.created_at)
+      container.innerHTML += `
+      <div class="issue-card" onclick="window.location.href='issue-detail.html?id=${issue.id}'">
+        <div class="issue-top">
+          <p class="issue-title">${issue.title}</p>
+          <span class="status-badge ${stClass}">${stLabel}</span>
+        </div>
+        <div class="issue-meta">
+          <span class="category-badge">${issue.category}</span>
+          <span>📍 ${issue.location}</span>
+          <span>🕐 ${ago}</span>
+          <span>👍 ${issue.upvotes}</span>
+        </div>
+      </div>`
+    }
+  } catch(e){
+    container.innerHTML = `<div class="empty-state"><div class="ei">⚠️</div><p>Could not load issues.</p></div>`
+  }
+}
+
+function getTimeAgo(d){
+  const s=Math.floor((new Date()-new Date(d))/1000)
+  const m=Math.floor(s/60),h=Math.floor(m/60),dy=Math.floor(h/24),mo=Math.floor(dy/30)
+  if(mo>0) return mo+" month ago"
+  if(dy>0) return dy+" day ago"
+  if(h>0) return h+" hour ago"
+  if(m>0) return m+" min ago"
+  return "Just now"
+}
+
+loadUserInfo()
+getMyIssues()
+
+document.getElementById("logoutBtn").addEventListener("click",()=>{localStorage.removeItem("token");window.location.href="login.html"})
+document.getElementById("dashboardBtn").addEventListener("click",()=>window.location.href="dashboard.html")
+document.getElementById("reportIssueBtn").addEventListener("click",()=>window.location.href="report-issue.html")
+document.getElementById("leaderboardBtn").addEventListener("click",()=>window.location.href="leaderboard.html")
+document.getElementById("resolvedBtn").addEventListener("click",()=>window.location.href="resolved.html")
+</script>
+</body>
+</html>

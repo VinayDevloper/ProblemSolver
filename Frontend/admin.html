@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CampusCoord Admin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;background:#f5f5f5;}
+
+#loginScreen{
+  display:flex;justify-content:center;align-items:center;
+  height:100vh;background:#f5f5f5;
+}
+.login-card{
+  background:white;padding:40px;width:370px;
+  border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1);
+}
+.login-card h1{text-align:center;color:#2563eb;margin-bottom:4px;}
+.admin-badge{
+  display:block;text-align:center;background:#fef3c7;color:#92400e;
+  font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;
+  width:fit-content;margin:0 auto 24px;letter-spacing:1px;
+}
+.login-card label{display:block;margin-bottom:6px;font-size:14px;font-weight:600;color:#374151;}
+.login-card input{
+  width:100%;padding:11px 14px;border:1px solid #d1d5db;
+  border-radius:8px;font-size:15px;margin-bottom:16px;outline:none;
+  transition:border-color 0.2s;
+}
+.login-card input:focus{border-color:#2563eb;}
+#adminLoginBtn{
+  width:100%;padding:12px;background:#2563eb;color:white;border:none;
+  border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:background 0.2s;
+}
+#adminLoginBtn:hover{background:#1d4ed8;}
+.login-hint{margin-top:16px;text-align:center;color:#9ca3af;font-size:13px;}
+.login-error{
+  background:#fee2e2;color:#dc2626;padding:10px 14px;
+  border-radius:8px;font-size:14px;margin-bottom:14px;display:none;
+}
+
+#adminApp{display:none;}
+.container{display:flex;}
+
+.sidebar{
+  position:fixed;left:0;top:0;width:260px;height:100vh;
+  padding:20px;background:#e9ecef;display:flex;flex-direction:column;
+}
+.logo{color:#0d6efd;margin-bottom:6px;font-size:20px;}
+.admin-tag{
+  font-size:11px;font-weight:700;letter-spacing:1px;color:#92400e;
+  background:#fef3c7;padding:3px 10px;border-radius:20px;
+  display:inline-block;margin-bottom:28px;
+}
+.menu-item{
+  padding:11px 14px;margin-bottom:8px;border-radius:8px;cursor:pointer;
+  font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;
+  transition:background 0.15s,transform 0.15s;
+}
+.menu-item:hover{background:#dbeafe;transform:translateX(3px);}
+.menu-item.active{background:#dbeafe;color:#0d6efd;font-weight:700;}
+.menu-icon{font-size:16px;}
+.logout-section{margin-top:auto;border-top:1px solid #d1d5db;padding-top:16px;}
+.logout{background:#fee2e2;color:#dc2626;border:1px solid #fecaca;text-align:center;font-weight:600;}
+.logout:hover{background:#fecaca;}
+
+.main-content{margin-left:280px;padding:36px;min-height:100vh;}
+.page-title{font-size:28px;font-weight:700;margin-bottom:6px;}
+.subtitle{color:#6b7280;margin-bottom:28px;font-size:15px;}
+
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}
+.stat-card{background:white;border-radius:12px;padding:22px 20px;box-shadow:0 2px 10px rgba(0,0,0,0.06);}
+.stat-label{font-size:13px;color:#6b7280;margin-bottom:8px;}
+.stat-value{font-size:32px;font-weight:800;color:#1e40af;}
+.stat-icon{font-size:22px;float:right;margin-top:-36px;}
+
+.section{display:none;}
+.section.active{display:block;}
+
+.table-card{
+  background:white;border-radius:12px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.07);overflow:hidden;margin-bottom:24px;
+}
+.table-header{
+  padding:18px 22px;border-bottom:1px solid #e5e7eb;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.table-header h3{font-size:17px;font-weight:700;}
+table{width:100%;border-collapse:collapse;}
+th{
+  background:#f9fafb;padding:12px 18px;text-align:left;
+  font-size:13px;color:#6b7280;font-weight:600;border-bottom:1px solid #e5e7eb;
+}
+td{padding:14px 18px;border-bottom:1px solid #f3f4f6;font-size:14px;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#f9fafb;}
+
+.badge{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;display:inline-block;}
+.badge-open{background:#dcfce7;color:#166534;}
+.badge-progress{background:#fef3c7;color:#92400e;}
+.badge-resolved{background:#dbeafe;color:#1d4ed8;}
+.badge-cat{background:#dbeafe;color:#2563eb;}
+.badge-banned{background:#fee2e2;color:#dc2626;}
+.badge-active{background:#dcfce7;color:#166534;}
+
+.btn{padding:7px 14px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;transition:opacity 0.15s;}
+.btn:hover{opacity:0.8;}
+.btn-danger{background:#fee2e2;color:#dc2626;}
+.btn-warn{background:#fef3c7;color:#b45309;}
+.btn-primary{background:#dbeafe;color:#1d4ed8;}
+.btn-success{background:#dcfce7;color:#166534;}
+.btn-sm{padding:5px 10px;font-size:12px;}
+.btn-actions{display:flex;gap:8px;align-items:center;}
+
+.report-item{padding:18px 22px;border-bottom:1px solid #f3f4f6;}
+.report-item:last-child{border-bottom:none;}
+.report-meta{color:#6b7280;font-size:13px;margin:4px 0 10px;}
+.report-reason{
+  background:#fef3c7;color:#92400e;padding:6px 12px;
+  border-radius:6px;font-size:13px;display:inline-block;margin-bottom:10px;
+}
+.report-actions{display:flex;gap:10px;}
+
+.search-bar{
+  padding:10px 14px;border:1px solid #d1d5db;border-radius:8px;
+  font-size:14px;outline:none;width:300px;margin-bottom:16px;transition:border-color 0.2s;
+}
+.search-bar:focus{border-color:#2563eb;}
+
+.modal-bg{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);
+  z-index:1000;justify-content:center;align-items:center;
+}
+.modal-bg.open{display:flex;}
+.modal{background:white;border-radius:14px;padding:32px;width:440px;box-shadow:0 8px 40px rgba(0,0,0,0.18);}
+.modal h3{font-size:19px;font-weight:700;margin-bottom:10px;}
+.modal p{color:#6b7280;font-size:14px;margin-bottom:22px;}
+.modal-actions{display:flex;gap:12px;justify-content:flex-end;}
+
+.empty-state{text-align:center;padding:48px 20px;color:#9ca3af;font-size:15px;}
+.empty-icon{font-size:40px;margin-bottom:12px;}
+.loading{text-align:center;padding:30px;color:#6b7280;}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:28px;right:28px;z-index:2000;
+  background:#1e293b;color:white;padding:12px 20px;border-radius:10px;
+  font-size:14px;font-weight:500;opacity:0;pointer-events:none;
+  transition:opacity 0.3s;box-shadow:0 4px 20px rgba(0,0,0,0.2);
+}
+.toast.show{opacity:1;}
+.toast.success{border-left:4px solid #22c55e;}
+.toast.error{border-left:4px solid #ef4444;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <h1>CampusCoord</h1>
+    <span class="admin-badge">ADMIN PANEL</span>
+    <div class="login-error" id="loginError"></div>
+    <label>Admin Email</label>
+    <input type="email" id="adminEmail" placeholder="admin@university.edu">
+    <label>Password</label>
+    <input type="password" id="adminPassword" placeholder="Enter admin password">
+    <button id="adminLoginBtn">Sign In as Admin</button>
+    <p class="login-hint">Only authorized administrators can access this panel.</p>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="adminApp">
+<div class="container">
+  <div class="sidebar">
+    <h2 class="logo">CampusCoord</h2>
+    <span class="admin-tag">⚙ ADMIN</span>
+    <div class="menu-item active" data-section="overview"><span class="menu-icon">📊</span> Overview</div>
+    <div class="menu-item" data-section="issues"><span class="menu-icon">🗂️</span> Manage Issues</div>
+    <div class="menu-item" data-section="comments"><span class="menu-icon">💬</span> Manage Comments</div>
+    <div class="menu-item" data-section="users"><span class="menu-icon">👥</span> Manage Users</div>
+    <div class="menu-item" data-section="reported"><span class="menu-icon">🚩</span> Reported Content</div>
+    <div class="logout-section">
+      <div class="menu-item logout" id="adminLogoutBtn">🚪 Logout</div>
+    </div>
+  </div>
+
+  <div class="main-content">
+
+    <!-- OVERVIEW -->
+    <div class="section active" id="section-overview">
+      <h1 class="page-title">Admin Overview</h1>
+      <p class="subtitle">Campus issue management at a glance</p>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Total Issues</div><div class="stat-value" id="statIssues">—</div><div class="stat-icon">🗂️</div></div>
+        <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value" id="statUsers">—</div><div class="stat-icon">👥</div></div>
+        <div class="stat-card"><div class="stat-label">Resolved</div><div class="stat-value" id="statResolved">—</div><div class="stat-icon">✅</div></div>
+        <div class="stat-card"><div class="stat-label">Pending Reports</div><div class="stat-value" id="statReports">—</div><div class="stat-icon">🚩</div></div>
+      </div>
+      <div class="table-card">
+        <div class="table-header"><h3>Recent Issues</h3></div>
+        <div id="recentIssues"><div class="loading">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- ISSUES -->
+    <div class="section" id="section-issues">
+      <h1 class="page-title">Manage Issues</h1>
+      <p class="subtitle">View, filter and delete reported campus issues</p>
+      <input class="search-bar" id="issueSearch" placeholder="🔍  Search by title, category, ID...">
+      <div class="table-card">
+        <div id="issuesTable"><div class="loading">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- COMMENTS -->
+    <div class="section" id="section-comments">
+      <h1 class="page-title">Manage Comments</h1>
+      <p class="subtitle">Review and delete inappropriate comments</p>
+      <input class="search-bar" id="commentSearch" placeholder="🔍  Search by author, comment text...">
+      <div class="table-card">
+        <div id="commentsTable"><div class="loading">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="section" id="section-users">
+      <h1 class="page-title">Manage Users</h1>
+      <p class="subtitle">View all registered users and manage accounts</p>
+      <input class="search-bar" id="userSearch" placeholder="🔍  Search by name or email...">
+      <div class="table-card">
+        <div id="usersTable"><div class="loading">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- REPORTED -->
+    <div class="section" id="section-reported">
+      <h1 class="page-title">Reported Content</h1>
+      <p class="subtitle">Review content flagged by users</p>
+      <div class="table-card">
+        <div class="table-header"><h3>🚩 Reported Issues</h3></div>
+        <div id="reportedIssues"><div class="loading">Loading...</div></div>
+      </div>
+      <div class="table-card" style="margin-top:24px;">
+        <div class="table-header"><h3>🚩 Reported Comments</h3></div>
+        <div id="reportedComments"><div class="loading">Loading...</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-bg" id="confirmModal">
+  <div class="modal">
+    <h3 id="modalTitle">Confirm Action</h3>
+    <p id="modalMsg">Are you sure?</p>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" id="modalConfirmBtn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = "http://127.0.0.1:8000";
+let adminToken = null;
+let allIssues = [], allComments = [], allUsers = [];
+
+// ── TOAST ────────────────────────────────────────────────────────────────────
+function showToast(msg, type="success") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = `toast show ${type}`;
+  setTimeout(() => { t.className = "toast"; }, 3000);
+}
+
+// ── LOGIN ────────────────────────────────────────────────────────────────────
+// FIX: No hardcoded password. We only rely on backend /login + email check.
+// Admin email is set here — change to your email.
+const ADMIN_EMAIL = "sawantvinay289@gmail.com";
+
+document.getElementById("adminLoginBtn").addEventListener("click", async () => {
+  const email = document.getElementById("adminEmail").value.trim();
+  const pass  = document.getElementById("adminPassword").value;
+  const errEl = document.getElementById("loginError");
+  errEl.style.display = "none";
+
+  if (!email || !pass) { showLoginError("Please enter email and password."); return; }
+
+  const btn = document.getElementById("adminLoginBtn");
+  btn.textContent = "Signing in..."; btn.disabled = true;
+
+  const form = new URLSearchParams();
+  form.append("username", email);
+  form.append("password", pass);
+
+  try {
+    const res  = await fetch(`${API}/login`, { method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body:form });
+    const data = await res.json();
+
+    if (data.access_token) {
+      // FIX: Check admin email on frontend AND backend will 403 on admin routes if not admin
+      if (email !== ADMIN_EMAIL) {
+        showLoginError("Access denied. This account is not an admin.");
+        return;
+      }
+      adminToken = data.access_token;
+      showAdminApp();
+    } else {
+      showLoginError(data.message || "Invalid credentials.");
+    }
+  } catch(e) {
+    showLoginError("Cannot connect to backend. Is FastAPI running?");
+  } finally {
+    btn.textContent = "Sign In as Admin"; btn.disabled = false;
+  }
+});
+
+function showLoginError(msg) {
+  const el = document.getElementById("loginError");
+  el.textContent = msg; el.style.display = "block";
+}
+
+function showAdminApp() {
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("adminApp").style.display = "block";
+  loadOverview();
+}
+
+document.getElementById("adminLogoutBtn").addEventListener("click", () => {
+  adminToken = null;
+  document.getElementById("adminApp").style.display = "none";
+  document.getElementById("loginScreen").style.display = "flex";
+  document.getElementById("adminEmail").value = "";
+  document.getElementById("adminPassword").value = "";
+  // Reset sidebar to overview
+  document.querySelectorAll(".menu-item[data-section]").forEach(m => m.classList.remove("active"));
+  document.querySelector('[data-section="overview"]').classList.add("active");
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  document.getElementById("section-overview").classList.add("active");
+});
+
+// ── NAVIGATION ───────────────────────────────────────────────────────────────
+document.querySelectorAll(".menu-item[data-section]").forEach(item => {
+  item.addEventListener("click", () => {
+    document.querySelectorAll(".menu-item[data-section]").forEach(m => m.classList.remove("active"));
+    document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+    item.classList.add("active");
+    const sec = item.dataset.section;
+    document.getElementById(`section-${sec}`).classList.add("active");
+    const loaders = { issues:loadIssues, comments:loadComments, users:loadUsers, reported:loadReported, overview:loadOverview };
+    (loaders[sec] || loadOverview)();
+  });
+});
+
+// ── OVERVIEW ─────────────────────────────────────────────────────────────────
+async function loadOverview() {
+  try {
+    // FIX: fetch issues and reports in parallel; actually load report count
+    const [issuesRes, usersRes, issueRepsRes, cmtRepsRes] = await Promise.all([
+      fetch(`${API}/issues`),
+      fetch(`${API}/`, { headers: authHeader() }),
+      fetch(`${API}/admin/issue-reports`, { headers: authHeader() }),
+      fetch(`${API}/admin/comment-reports`, { headers: authHeader() })
+    ]);
+
+    const issues = await issuesRes.json();
+    allIssues = Array.isArray(issues) ? issues : [];
+    document.getElementById("statIssues").textContent = allIssues.length;
+    document.getElementById("statResolved").textContent = allIssues.filter(i => i.status === "resolved").length;
+
+    // Users count
+    try {
+      const users = await usersRes.json();
+      document.getElementById("statUsers").textContent = Array.isArray(users) ? users.length : "—";
+    } catch(e) { document.getElementById("statUsers").textContent = "—"; }
+
+    // FIX: Real report count
+    try {
+      const ir = issueRepsRes.ok ? await issueRepsRes.json() : [];
+      const cr = cmtRepsRes.ok  ? await cmtRepsRes.json()   : [];
+      document.getElementById("statReports").textContent = (ir.length || 0) + (cr.length || 0);
+    } catch(e) { document.getElementById("statReports").textContent = "—"; }
+
+    // Recent issues — FIX: use correct column count (no "Comments" col in overview)
+    const recent = allIssues.slice(0, 8);
+    let html = `<table><thead><tr><th>ID</th><th>Title</th><th>Category</th><th>Status</th><th>Upvotes</th><th>Actions</th></tr></thead><tbody>`;
+    for (const i of recent) html += buildIssueRow(i, false);
+    html += `</tbody></table>`;
+    document.getElementById("recentIssues").innerHTML = html;
+  } catch(e) {
+    document.getElementById("recentIssues").innerHTML = backendError();
+  }
+}
+
+// ── ISSUES ───────────────────────────────────────────────────────────────────
+async function loadIssues() {
+  document.getElementById("issuesTable").innerHTML = `<div class="loading">Loading issues...</div>`;
+  try {
+    const res = await fetch(`${API}/issues`);
+    allIssues = await res.json();
+    if (!Array.isArray(allIssues)) allIssues = [];
+    renderIssuesTable(allIssues);
+  } catch(e) {
+    document.getElementById("issuesTable").innerHTML = backendError();
+  }
+}
+
+function renderIssuesTable(issues) {
+  if (!issues.length) { document.getElementById("issuesTable").innerHTML = emptyState("No issues found"); return; }
+  let html = `<table><thead><tr><th>ID</th><th>Title</th><th>Category</th><th>Status</th><th>Upvotes</th><th>Comments</th><th>Actions</th></tr></thead><tbody>`;
+  for (const i of issues) html += buildIssueRow(i, true);
+  html += `</tbody></table>`;
+  document.getElementById("issuesTable").innerHTML = html;
+}
+
+// FIX: showComments param controls both header AND data — consistent
+function buildIssueRow(i, showComments) {
+  const statusMap   = { open:"badge-open", in_progress:"badge-progress", resolved:"badge-resolved" };
+  const statusLabel = { open:"Open", in_progress:"In Progress", resolved:"Resolved" };
+  const cls = statusMap[i.status] || "badge-open";
+  const lbl = statusLabel[i.status] || i.status;
+  return `<tr id="issue-row-${i.id}">
+    <td>#${i.id}</td>
+    <td><b>${escHtml(i.title)}</b></td>
+    <td><span class="badge badge-cat">${escHtml(i.category)}</span></td>
+    <td><span class="badge ${cls}">${lbl}</span></td>
+    <td>${i.upvotes || 0}</td>
+    ${showComments ? `<td>${i.comment_count || 0}</td>` : ""}
+    <td>
+      <button class="btn btn-danger btn-sm"
+        onclick="confirmDelete('issue',${i.id},'Delete Issue #${i.id}?','This will permanently remove the issue, comments, votes and claims.')">
+        🗑 Delete
+      </button>
+    </td>
+  </tr>`;
+}
+
+document.getElementById("issueSearch").addEventListener("input", function() {
+  const q = this.value.toLowerCase();
+  renderIssuesTable(allIssues.filter(i =>
+    i.title.toLowerCase().includes(q) ||
+    i.category.toLowerCase().includes(q) ||
+    String(i.id).includes(q)
+  ));
+});
+
+// ── COMMENTS ────────────────────────────────────────────────────────────────
+async function loadComments() {
+  document.getElementById("commentsTable").innerHTML = `<div class="loading">Loading comments...</div>`;
+  try {
+    const issuesRes = await fetch(`${API}/issues`);
+    const issues    = await issuesRes.json();
+    // FIX: Fetch ALL issues' comments, not just first 30
+    const promises  = issues.map(i =>
+      fetch(`${API}/comments/${i.id}`)
+        .then(r => r.json())
+        .then(cs => Array.isArray(cs) ? cs.map(c => ({...c, issue_id: i.id, issue_title: i.title})) : [])
+        .catch(() => [])
+    );
+    const results = await Promise.all(promises);
+    allComments   = results.flat();
+    renderCommentsTable(allComments);
+  } catch(e) {
+    document.getElementById("commentsTable").innerHTML = backendError();
+  }
+}
+
+function renderCommentsTable(comments) {
+  if (!comments.length) { document.getElementById("commentsTable").innerHTML = emptyState("No comments found"); return; }
+  let html = `<table><thead><tr><th>ID</th><th>Issue</th><th>Author</th><th>Comment</th><th>Date</th><th>Actions</th></tr></thead><tbody>`;
+  for (const c of comments) {
+    html += `<tr id="comment-row-${c.id}">
+      <td>#${c.id}</td>
+      <td><span class="badge badge-cat">#${c.issue_id}</span> ${escHtml((c.issue_title||"").substring(0,25))}</td>
+      <td>${escHtml(c.name||"")}</td>
+      <td>${escHtml((c.comment||"").substring(0,90))}${(c.comment||"").length > 90 ? "…" : ""}</td>
+      <td style="color:#6b7280;font-size:13px;">${formatDate(c.created_at)}</td>
+      <td>
+        <button class="btn btn-danger btn-sm"
+          onclick="confirmDelete('comment',${c.id},'Delete Comment #${c.id}?','This comment will be permanently removed.')">
+          🗑 Delete
+        </button>
+      </td>
+    </tr>`;
+  }
+  html += `</tbody></table>`;
+  document.getElementById("commentsTable").innerHTML = html;
+}
+
+document.getElementById("commentSearch").addEventListener("input", function() {
+  const q = this.value.toLowerCase();
+  renderCommentsTable(allComments.filter(c =>
+    (c.comment||"").toLowerCase().includes(q) ||
+    (c.name||"").toLowerCase().includes(q) ||
+    String(c.issue_id).includes(q)
+  ));
+});
+
+// ── USERS ───────────────────────────────────────────────────────────────────
+async function loadUsers() {
+  document.getElementById("usersTable").innerHTML = `<div class="loading">Loading users...</div>`;
+  try {
+    const res = await fetch(`${API}/`, { headers: authHeader() });
+    allUsers  = await res.json();
+    if (!Array.isArray(allUsers)) throw new Error("Not an array");
+    renderUsersTable(allUsers);
+  } catch(e) {
+    document.getElementById("usersTable").innerHTML = backendError();
+  }
+}
+
+function renderUsersTable(users) {
+  if (!users.length) { document.getElementById("usersTable").innerHTML = emptyState("No users found"); return; }
+  let html = `<table><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Status</th><th>Actions</th></tr></thead><tbody>`;
+  for (const u of users) {
+    const banned = !!u.banned;
+    html += `<tr id="user-row-${u.id}">
+      <td>#${u.id}</td>
+      <td><b>${escHtml(u.name)}</b></td>
+      <td>${escHtml(u.email)}</td>
+      <td><span class="badge ${banned ? 'badge-banned':'badge-active'}">${banned ? 'Banned':'Active'}</span></td>
+      <td>
+        <div class="btn-actions">
+          ${banned
+            ? `<button class="btn btn-success btn-sm" onclick="confirmUnban(${u.id},'${escHtml(u.name)}')">✓ Unban</button>`
+            : `<button class="btn btn-warn btn-sm" onclick="confirmBan(${u.id},'${escHtml(u.name)}')">🚫 Ban</button>`
+          }
+          <button class="btn btn-danger btn-sm"
+            onclick="confirmDelete('user',${u.id},'Delete user ${escHtml(u.name)}?','All their issues, comments and activity will be permanently deleted.')">
+            🗑 Delete
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }
+  html += `</tbody></table>`;
+  document.getElementById("usersTable").innerHTML = html;
+}
+
+document.getElementById("userSearch").addEventListener("input", function() {
+  const q = this.value.toLowerCase();
+  renderUsersTable(allUsers.filter(u =>
+    u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)
+  ));
+});
+
+// ── REPORTED CONTENT ─────────────────────────────────────────────────────────
+async function loadReported() {
+  document.getElementById("reportedIssues").innerHTML  = `<div class="loading">Loading...</div>`;
+  document.getElementById("reportedComments").innerHTML = `<div class="loading">Loading...</div>`;
+  try {
+    const [irRes, crRes] = await Promise.all([
+      fetch(`${API}/admin/issue-reports`,   { headers: authHeader() }),
+      fetch(`${API}/admin/comment-reports`, { headers: authHeader() })
+    ]);
+    const ir = irRes.ok ? await irRes.json() : null;
+    const cr = crRes.ok ? await crRes.json() : null;
+
+    if (ir === null) {
+      document.getElementById("reportedIssues").innerHTML = backendError();
+    } else {
+      renderIssueReports(ir);
+    }
+    if (cr === null) {
+      document.getElementById("reportedComments").innerHTML = backendError();
+    } else {
+      renderCommentReports(cr);
+    }
+  } catch(e) {
+    document.getElementById("reportedIssues").innerHTML  = backendError();
+    document.getElementById("reportedComments").innerHTML = backendError();
+  }
+}
+
+function renderIssueReports(reports) {
+  if (!reports.length) { document.getElementById("reportedIssues").innerHTML = emptyState("No reported issues 🎉"); return; }
+  let html = "";
+  for (const r of reports) {
+    html += `<div class="report-item" id="ireport-${r.id}">
+      <b>Issue #${r.issue_id}</b> — ${escHtml(r.issue_title || "(deleted)")}
+      <div class="report-meta">Reported by user #${r.reported_by} · ${formatDate(r.created_at)}</div>
+      <div class="report-reason">Reason: ${escHtml(r.reason)}</div>
+      <div class="report-actions">
+        <button class="btn btn-danger btn-sm"
+          onclick="confirmDelete('issue',${r.issue_id},'Delete Issue #${r.issue_id}?','Issue, all comments and votes will be permanently removed.')">
+          🗑 Delete Issue
+        </button>
+        <button class="btn btn-primary btn-sm"
+          onclick="dismissReport('issue',${r.id})">
+          ✓ Dismiss Report
+        </button>
+      </div>
+    </div>`;
+  }
+  document.getElementById("reportedIssues").innerHTML = html;
+}
+
+function renderCommentReports(reports) {
+  if (!reports.length) { document.getElementById("reportedComments").innerHTML = emptyState("No reported comments 🎉"); return; }
+  let html = "";
+  for (const r of reports) {
+    html += `<div class="report-item" id="creport-${r.id}">
+      <b>Comment #${r.comment_id}</b>
+      ${r.comment_text ? `<span style="color:#6b7280;font-size:13px;"> — "${escHtml(r.comment_text.substring(0,60))}"</span>` : ""}
+      <div class="report-meta">Reported by user #${r.reported_by} · ${formatDate(r.created_at)}</div>
+      <div class="report-reason">Reason: ${escHtml(r.reason)}</div>
+      <div class="report-actions">
+        <button class="btn btn-danger btn-sm"
+          onclick="confirmDelete('comment',${r.comment_id},'Delete Comment #${r.comment_id}?','This comment will be permanently removed.')">
+          🗑 Delete Comment
+        </button>
+        <button class="btn btn-primary btn-sm"
+          onclick="dismissReport('comment',${r.id})">
+          ✓ Dismiss Report
+        </button>
+      </div>
+    </div>`;
+  }
+  document.getElementById("reportedComments").innerHTML = html;
+}
+
+// ── ACTIONS ──────────────────────────────────────────────────────────────────
+function confirmDelete(type, id, title, msg) {
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("modalMsg").textContent   = msg;
+  document.getElementById("confirmModal").classList.add("open");
+  document.getElementById("modalConfirmBtn").onclick = () => executeDelete(type, id);
+}
+
+function confirmBan(userId, name) {
+  document.getElementById("modalTitle").textContent = `Ban ${name}?`;
+  document.getElementById("modalMsg").textContent   = "User will be blocked from logging in.";
+  document.getElementById("confirmModal").classList.add("open");
+  document.getElementById("modalConfirmBtn").onclick = () => executeBan(userId, false);
+}
+
+function confirmUnban(userId, name) {
+  document.getElementById("modalTitle").textContent = `Unban ${name}?`;
+  document.getElementById("modalMsg").textContent   = "User will be able to log in again.";
+  document.getElementById("confirmModal").classList.add("open");
+  document.getElementById("modalConfirmBtn").onclick = () => executeBan(userId, true);
+}
+
+function closeModal() {
+  document.getElementById("confirmModal").classList.remove("open");
+}
+
+// FIX: Remove row from DOM immediately after delete — no full reload needed
+async function executeDelete(type, id) {
+  closeModal();
+  const endpointMap = {
+    issue:   `/admin/delete-issue/${id}`,
+    comment: `/admin/delete-comment/${id}`,
+    user:    `/admin/delete-user/${id}`
+  };
+  const endpoint = endpointMap[type];
+  if (!endpoint) return;
+
+  try {
+    const res  = await fetch(`${API}${endpoint}`, { method:"DELETE", headers: authHeader() });
+    const data = await res.json();
+
+    if (res.ok) {
+      showToast(data.message || "Deleted successfully", "success");
+
+      // FIX: Remove the specific row from DOM immediately
+      const rowId = `${type}-row-${id}`;
+      const row   = document.getElementById(rowId);
+      if (row) row.remove();
+
+      // Also update in-memory arrays
+      if (type === "issue") {
+        allIssues   = allIssues.filter(i => i.id !== id);
+        allComments = allComments.filter(c => c.issue_id !== id);
+      } else if (type === "comment") {
+        allComments = allComments.filter(c => c.id !== id);
+      } else if (type === "user") {
+        allUsers = allUsers.filter(u => u.id !== id);
+      }
+
+      // Update stat counts on overview if visible
+      document.getElementById("statIssues").textContent   = allIssues.length;
+      document.getElementById("statResolved").textContent = allIssues.filter(i => i.status === "resolved").length;
+
+      // If on reported section, also reload to clean dismissed reports
+      const activeSection = document.querySelector(".menu-item.active[data-section]")?.dataset.section;
+      if (activeSection === "reported") loadReported();
+
+    } else {
+      showToast(data.detail || "Delete failed.", "error");
+    }
+  } catch(e) {
+    showToast("Network error. Check backend.", "error");
+  }
+}
+
+async function executeBan(userId, unban) {
+  closeModal();
+  const url    = unban ? `${API}/admin/unban-user/${userId}` : `${API}/admin/ban-user/${userId}`;
+  try {
+    const res  = await fetch(url, { method:"POST", headers: authHeader() });
+    const data = await res.json();
+    if (res.ok) {
+      showToast(data.message || (unban ? "User unbanned" : "User banned"), "success");
+      // FIX: Update banned status in allUsers and re-render without full fetch
+      const u = allUsers.find(u => u.id === userId);
+      if (u) { u.banned = !unban; renderUsersTable(allUsers); }
+    } else {
+      showToast(data.detail || "Action failed.", "error");
+    }
+  } catch(e) {
+    showToast("Network error. Check backend.", "error");
+  }
+}
+
+async function dismissReport(type, reportId) {
+  try {
+    const res  = await fetch(`${API}/admin/dismiss-report/${type}/${reportId}`, { method:"DELETE", headers: authHeader() });
+    const data = await res.json();
+    if (res.ok) {
+      showToast("Report dismissed", "success");
+      // FIX: Remove the specific report item from DOM
+      const el = document.getElementById(type === "issue" ? `ireport-${reportId}` : `creport-${reportId}`);
+      if (el) el.remove();
+    } else {
+      showToast(data.detail || "Failed to dismiss.", "error");
+    }
+  } catch(e) {
+    showToast("Network error.", "error");
+  }
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function authHeader() {
+  return { "Authorization": `Bearer ${adminToken}`, "Content-Type": "application/json" };
+}
+
+function escHtml(str) {
+  return String(str||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function formatDate(str) {
+  if (!str) return "—";
+  try { return new Date(str).toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" }); }
+  catch(e) { return str; }
+}
+
+function emptyState(msg) {
+  return `<div class="empty-state"><div class="empty-icon">📭</div>${msg}</div>`;
+}
+
+function backendError() {
+  return `<div class="empty-state"><div class="empty-icon">⚠️</div>Could not fetch data. Make sure FastAPI is running on port 8000.</div>`;
+}
+
+// FIX: Close modal on background click
+document.getElementById("confirmModal").addEventListener("click", function(e) {
+  if (e.target === this) closeModal();
+});
+
+// FIX: Enter key on login
+document.getElementById("adminPassword").addEventListener("keydown", e => {
+  if (e.key === "Enter") document.getElementById("adminLoginBtn").click();
+});
+</script>
+</body>
+</html>

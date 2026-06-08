@@ -104,7 +104,7 @@
             right:15px;
             top:15px;
             width:16px;
-            height:16px;
+            height:12px;
             cursor:pointer;
         }
 
@@ -223,7 +223,6 @@
                     }
                 )
 
-
                 const data =
                 await response.json()
 
@@ -232,13 +231,24 @@
 
                 console.log(data)
 
-                localStorage.setItem(
-                    "token",
-                    data.access_token
-                )
+                if(data.message === "Email already registered"){
 
-                window.location.href =
-                "login.html"
+                    alert("Account already exists")
+
+                }
+                else{
+
+                    localStorage.setItem(
+                        "token",
+                        data.access_token
+                    )
+
+                    alert("Account created successfully")
+
+                    window.location.href =
+                    "dashboard.html"
+
+                }
 
             }
         )

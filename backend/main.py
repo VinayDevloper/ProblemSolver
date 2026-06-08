@@ -16,6 +16,10 @@ app.mount(
     name="uploads"
 )
 
+
+from backend.routes.profile_routes import router as profile_router
+app.include_router(profile_router)
+
 from backend.routes.auth_routes import (
     get_current_user,
     oauth2_scheme
@@ -41,6 +45,14 @@ from backend.routes.verification_routes import (
     router as verification_router
 )
 app.include_router(verification_router)
+
+from backend.routes.report_routes import (
+    router as report_router
+)
+app.include_router(report_router)
+
+from backend.routes.admin_routes import router as admin_router
+app.include_router(admin_router)
 
 app.add_middleware(
     CORSMiddleware,

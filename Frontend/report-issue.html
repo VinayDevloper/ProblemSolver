@@ -206,15 +206,24 @@
                 Report Issue
             </div>
 
-            <div class="menu-item">
-                My Issues
+            <div
+                class="menu-item"
+                id="myProfileBtn"
+            >
+                My Profile
             </div>
 
-            <div class="menu-item">
+            <div
+                class="menu-item"
+                id="leaderboardBtn"
+            >
                 Leaderboard
             </div>
 
-            <div class="menu-item">
+            <div
+                class="menu-item"
+                id="resolvedBtn"
+            >
                 Resolved
             </div>
 
@@ -265,20 +274,48 @@
 
                     <button type="button" class="category-btn">Electrical</button>
 
+                    <button type="button" class="category-btn">Water</button>
+
                     <button type="button" class="category-btn">Cleanliness</button>
 
-                    <button type="button" class="category-btn">Water Supply</button>
+                    <button type="button" class="category-btn">Hostel</button>
+
+                    <button type="button" class="category-btn">Mess</button>
+
+                    <button type="button" class="category-btn">WiFi</button>
+
+                    <button type="button" class="category-btn">Academics</button>
+
+                    <button type="button" class="category-btn">Placements</button>
+
+                    <button type="button" class="category-btn">Exam Department</button>
+
+                    <button type="button" class="category-btn">Environment</button>
+
+                    <button type="button" class="category-btn">Animal</button>
+
+                    <button type="button" class="category-btn">Events</button>
+
+                    <button type="button" class="category-btn">Emergency Help</button>
 
                     <button type="button" class="category-btn">Safety</button>
-
-                    <button type="button" class="category-btn">College Facility</button>
 
                     <button type="button" class="category-btn">Other</button>
 
                 </div>
 
-            <label>Location</label>
+                <input
+                    id="otherCategory"
+                    placeholder="Enter custom category"
+                    style="
+                        display:none;
+                        margin-top:15px;
+                    "
+                >
 
+            <label>Location</label>
+            
+            
             <input
                 id="location"
                 placeholder="e.g. Classroom 204"
@@ -347,6 +384,9 @@
 
         let selectedCategory = ""
 
+        const otherCategoryInput =
+        document.getElementById("otherCategory")
+
         const categoryButtons =
         document.querySelectorAll(".category-btn")
 
@@ -365,6 +405,19 @@
 
                     selectedCategory =
                     btn.innerText
+
+                    if(selectedCategory === "Other"){
+
+                        otherCategoryInput.style.display =
+                        "block"
+                    }
+                    else{
+
+                        otherCategoryInput.style.display =
+                        "none"
+
+                        otherCategoryInput.value = ""
+                    }
                 }
             )
         })
@@ -384,11 +437,42 @@
                 const description =
                 document.getElementById("description").value
 
-                const category =
+                let category =
                 selectedCategory
+
+                if(category === "Other"){
+
+                    category =
+                    otherCategoryInput.value.trim()
+                }
 
                 const location =
                 document.getElementById("location").value
+
+                if(title.trim() === ""){
+                    alert("Enter issue title")
+                    return
+                }
+
+                if(description.trim() === ""){
+                    alert("Enter description")
+                    return
+                }
+
+                if(category.trim() === ""){
+                    alert("Select category")
+                    return
+                }
+
+                if(location.trim() === ""){
+                    alert("Enter location")
+                    return
+                }
+
+                if(category === ""){
+                    alert("Select category")
+                    return
+                }
 
                 const imageFile =
                 document.getElementById("issueImage").files[0]
@@ -449,14 +533,38 @@
                 )
                 const data = await response.json()
 
+                if(!response.ok){
+
+                    alert("Issue submission failed")
+
+                    submitBtn.innerText = "Submit"
+
+                    return
+                }
+
                 console.log(data)
+
+                submitBtn.innerText = "Submit"
+
+                alert("Issue reported successfully!")
+
+                setTimeout(function(){
+
+                    window.location.replace(
+                        "dashboard.html"
+                    )
+
+                },300)
+
                 
                 submitBtn.innerText = "Submit"
 
                 document.getElementById("title").value = ""
                 document.getElementById("description").value = ""
-                document.getElementById("category").value = ""
                 document.getElementById("location").value = ""
+                otherCategoryInput.value = ""
+
+                selectedCategory = ""
 
                 window.location.href = "dashboard.html"
                 console.log(data)
@@ -475,6 +583,42 @@
 
                     window.location.href =
                     "login.html"
+                }
+            )
+
+            const myProfileBtn =
+            document.getElementById("myProfileBtn")
+
+            myProfileBtn.addEventListener(
+                "click",
+                function(){
+
+                    window.location.href =
+                    "My_profile.html"
+                }
+            )
+
+            const leaderboardBtn =
+            document.getElementById("leaderboardBtn")
+
+            leaderboardBtn.addEventListener(
+                "click",
+                function(){
+
+                    window.location.href =
+                    "leaderboard.html"
+                }
+            )
+
+            const resolvedBtn =
+            document.getElementById("resolvedBtn")
+
+            resolvedBtn.addEventListener(
+                "click",
+                function(){
+
+                    window.location.href =
+                    "resolved.html"
                 }
             )
 

@@ -25,6 +25,25 @@ def create_issue(
     issue: IssueCreate,
     user = Depends(get_current_user)
 ):
+    if issue.title.strip() == "":
+        return {
+            "message": "Title required"
+        }
+
+    if issue.description.strip() == "":
+        return {
+            "message": "Description required"
+        }
+
+    if issue.category.strip() == "":
+        return {
+            "message": "Category required"
+        }
+
+    if issue.location.strip() == "":
+        return {
+            "message": "Location required"
+        }
 
     print(user)
 
@@ -195,3 +214,26 @@ def upload_image(
     return {
     "image_url": file_path
     }
+
+@router.get("/trending-categories")
+def trending_categories():
+
+    with engine.connect() as connection:
+
+        result = connection.execute(
+            text("""
+                SELECT
+                    category,
+                    COUNT(*) as total
+
+                FROM issues
+
+                GROUP BY category
+
+                ORDER BY total DESC
+
+                LIMIT 5
+            """)
+        )
+
+        return result.mappings().all()

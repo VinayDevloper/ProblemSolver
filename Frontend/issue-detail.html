@@ -2,880 +2,958 @@
 <html lang="en">
 <head>
     <title>Issue Detail</title>
-
     <style>
+        *{ box-sizing: border-box; }
+        body{ font-family: Arial; background-color: #f5f5f5; margin:0; }
 
-        .container{
-            display:flex;
-        }
-
-        .issue-detail{
-            width: 600px;
-            padding: 20px;
-            border: 1px solid gray;
-            border-radius: 10px;
-            box-shadow: 0px 2px 5px gray;
-        }
-
-        button{
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-right: 10px;
-            font-weight: bold;
-        }
+        .container{ display:flex; }
 
         .sidebar{
-        position:fixed;
-        left:0;
-        top:0;
+            position:fixed; left:0; top:0;
+            width:280px; height:100vh;
+            padding:20px; background:#e9ecef;
+            box-sizing:border-box;
+            display:flex; flex-direction:column;
+        }
+        .logo{ color:#0d6efd; margin-bottom:40px; }
+        .menu-item{
+            padding:12px; margin-bottom:10px;
+            border-radius:8px; cursor:pointer;
+        }
+        .active{ background:#dbeafe; color:#0d6efd; font-weight:700; }
+        .menu-item:hover{ background:#dbeafe; transform:translateX(4px); transition:0.2s; }
+        .logout{
+            background:#fee2e2; color:#dc2626;
+            border:1px solid #fecaca; font-weight:600; text-align:center;
+        }
+        .logout:hover{ background:#fecaca; }
+        .logout-section{ margin-top:auto; padding-top:20px; border-top:1px solid #d1d5db; }
 
-        width:280px;
-        height:100vh;
+        .main-content{ margin-left:320px; padding:40px; max-width:900px; }
 
-        padding:20px;
-        background:#e9ecef;
+        /* Issue Detail Card */
+        .issue-detail{
+            background:white; border-radius:16px;
+            padding:30px; box-shadow:0 2px 16px rgba(0,0,0,0.08);
+            margin-bottom:20px;
+        }
 
-        box-sizing:border-box;
+        .issue-detail h1{
+            margin:0 0 16px; font-size:24px; color:#111827;
+        }
 
+        .title-row{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            position:relative;
+        }
+
+        .menu-btn{
+            background:none;
+            border:none;
+            color:#6b7280;
+            font-size:24px;
+            cursor:pointer;
+            padding:0 8px;
+        }
+
+        .menu-btn:hover{
+            background:#f3f4f6;
+        }
+
+        .issue-menu{
+            position:absolute;
+            top:35px;
+            right:0;
+            min-width:140px;
+
+            background:white;
+            border:1px solid #e5e7eb;
+            border-radius:10px;
+            box-shadow:0 4px 12px rgba(0,0,0,0.1);
+            overflow:hidden;
+        }
+
+        .issue-menu div{
+            padding:12px 16px;
+            cursor:pointer;
+        }
+
+        .issue-menu div:hover{
+            background:#f9fafb;
+        }
+
+        .issue-detail img#issueImage{
+            width:100%; max-height:350px; object-fit:cover;
+            border-radius:12px; margin-bottom:20px;
+        }
+
+        .meta-grid{
+            display:grid; grid-template-columns:1fr 1fr;
+            gap:12px; margin:16px 0;
+        }
+        .meta-item{
+            background:#f9fafb; border-radius:10px;
+            padding:12px 16px; font-size:14px; color:#374151;
+        }
+        .meta-item strong{ display:block; font-size:12px; color:#6b7280; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px; }
+
+        .category-badge{
+            background:#dbeafe; color:#2563eb;
+            padding:4px 12px; border-radius:20px;
+            font-size:13px; font-weight:600; display:inline-block;
+        }
+
+        .status-badge{
+            display:inline-block; padding:4px 12px;
+            border-radius:20px; font-size:13px; font-weight:600;
+        }
+        .status-open{ background:#dcfce7; color:#166534; }
+        .status-progress{ background:#fef3c7; color:#92400e; }
+        .status-resolved{ background:#dbeafe; color:#1d4ed8; }
+
+        /* Action buttons */
+        .action-row{
+            display:flex; gap:12px; align-items:center;
+            margin:20px 0; flex-wrap:wrap;
+        }
+        button{
+            background-color:#2563eb; color:white; border:none;
+            padding:10px 20px; border-radius:8px; cursor:pointer;
+            font-weight:600; font-size:14px; transition:background 0.2s;
+        }
+        button:hover{ background-color:#1d4ed8; }
+        button:disabled{ background-color:#94a3b8; cursor:not-allowed; opacity:0.7; }
+
+        .upvote-stat{
+            display:flex; align-items:center; gap:6px;
+            background:#f9fafb; border-radius:8px; padding:8px 16px;
+            font-weight:600; color:#374151; font-size:15px;
+        }
+
+        /* Claim section */
+        .claim-card{
+            background:#f0f9ff; border:1px solid #bae6fd;
+            border-radius:12px; padding:20px; margin:20px 0;
+        }
+        .claim-card h3{ margin:0 0 12px; color:#0369a1; font-size:16px; }
+
+        .proof-upload-row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:12px 0; }
+
+        input[type="file"]{
+            border:1px solid #d1d5db; border-radius:8px;
+            padding:8px; background:white; font-size:13px;
+        }
+
+        #deleteProofBtn{ background:#b91c1c; }
+        #deleteProofBtn:hover{ background:#7f1d1d; }
+
+        img#proofImage{
+            width:100%; max-height:280px; object-fit:cover;
+            border-radius:10px; margin-top:12px;
+        }
+
+        /* Verification card - matches screenshot */
+        .verification-card{
+            background:white; border-radius:16px;
+            padding:28px; box-shadow:0 2px 16px rgba(0,0,0,0.08);
+            margin-bottom:20px;
+        }
+        .verification-header{
+            display:flex; justify-content:space-between; align-items:flex-start;
+            margin-bottom:12px;
+        }
+        .verification-title{
+            display:flex; align-items:center; gap:10px;
+            font-size:20px; font-weight:700; color:#111827;
+        }
+        .verify-icon{
+            width:28px; height:28px;
+            background:#dbeafe; border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+            color:#2563eb; font-size:14px; flex-shrink:0;
+        }
+        .total-votes-box{ text-align:right; }
+        .total-votes-box .vote-num{ font-size:28px; font-weight:800; color:#111827; line-height:1; }
+        .total-votes-box .vote-label{ font-size:11px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:1px; }
+
+        .verification-desc{
+            font-size:14px; color:#4b5563; margin:0 0 20px; line-height:1.6;
+        }
+
+        .vote-buttons{
+            display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;
+        }
+        .vote-btn{
+            border:none; cursor:pointer; border-radius:12px;
+            padding:20px 12px; text-align:center; transition:transform 0.15s, box-shadow 0.15s;
+            font-weight:700; font-size:15px;
+        }
+        .vote-btn:hover{ transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.12); }
+        .vote-btn .vote-emoji{ font-size:28px; display:block; margin-bottom:8px; }
+        .vote-btn-solved{ background:#dcfce7; color:#166534; }
+        .vote-btn-partial{ background:#fef3c7; color:#92400e; }
+        .vote-btn-notsolv{ background:#fee2e2; color:#991b1b; }
+
+        .verification-summary{
+            margin-top:16px; display:flex; gap:16px; flex-wrap:wrap;
+        }
+        .vsummary-item{
+            flex:1; min-width:80px; background:#f9fafb;
+            border-radius:10px; padding:12px; text-align:center;
+        }
+        .vsummary-num{ font-size:22px; font-weight:800; color:#111827; }
+        .vsummary-label{ font-size:12px; color:#6b7280; margin-top:2px; }
+
+        .final-decision{
+            margin-top:16px; padding:12px 16px; border-radius:10px;
+            font-weight:700; font-size:15px; text-align:center;
+        }
+
+        /* Comments */
+        .comments-card{
+            background:white; border-radius:16px;
+            padding:28px; box-shadow:0 2px 16px rgba(0,0,0,0.08);
+        }
+        .title-row{
         display:flex;
-        flex-direction:column;
+        justify-content:space-between;
+        align-items:flex-start;
+        width:100%;
     }
 
-    .main-content{
-        margin-left:320px;
-        padding:40px;
-    }
-
-    .logo{
-        color:#0d6efd;
-        margin-bottom:40px;
-    }
-
-    .menu-item{
-        padding:12px;
-        margin-bottom:10px;
-        border-radius:8px;
-        cursor:pointer;
-    }
-
-    .active{
-        background:#dbeafe;
-        color:#0d6efd;
-        font-weight:700;
-    }
-
-    .logout-section{
-        margin-top:auto;
-        padding-top:20px;
-        border-top:1px solid #d1d5db;
-    }
-
-    .menu-item:hover{
-        background:#dbeafe;
-        transform:translateX(4px);
-        transition:0.2s;
-    }
-
-    .logout{
-        background:#fee2e2;
-        color:#dc2626;
-        border:1px solid #fecaca;
-        font-weight:600;
-        text-align:center;
-    }
-
-    .logout:hover{
-            background:#fecaca;
+        #issueDots{
+            margin-left:auto;
         }
+        .comments-card h3{ margin:0 0 20px; font-size:18px; color:#111827; }
 
-        button:hover{
-            background-color: #1d4ed8;
+        .comment-input-row{
+            display:flex; gap:10px; margin-bottom:20px;
         }
-
-        button:disabled{
-            background-color: #94a3b8;
-
-            cursor: not-allowed;
-
-            opacity: 0.7;
+        #commentInput{
+            flex:1; padding:12px 16px; border:1px solid #d1d5db;
+            border-radius:10px; font-size:14px; outline:none;
+            transition:border-color 0.2s;
         }
+        #commentInput:focus{ border-color:#2563eb; }
+        #commentBtn{ flex-shrink:0; }
 
-        body{
-            font-family: Arial;
-            background-color: #f5f5f5;
+        .comment-item{
+            padding:14px 16px; border:1px solid #f3f4f6;
+            background:#f9fafb; border-radius:10px; margin-bottom:10px;
         }
+        .comment-item h4{ margin:0 0 6px; color:#111827; font-size:14px; }
+        .comment-item p{ margin:0 0 6px; color:#374151; font-size:14px; line-height:1.5; }
+        .comment-time{ font-size:12px; color:#9ca3af; }
 
-        #deleteProofBtn:hover{
-            background:#7f1d1d;
-        }
-
+        hr{ border:none; border-top:1px solid #e5e7eb; margin:24px 0; }
+        .dots-btn{background:none;border:none;cursor:pointer;font-size:20px;color:#6b7280;padding:4px 8px;border-radius:6px;line-height:1;}
+        .dots-btn:hover{background:#f3f4f6;color:#111827;}
+        .dots-menu{position:absolute;right:0;top:32px;background:white;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.12);min-width:160px;z-index:100;display:none;}
+        .dots-menu.open{display:block;}
+        .dots-menu-item{padding:11px 16px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;color:#374151;}
+        .dots-menu-item:hover{background:#f9fafb;}
+        .dots-menu-item.danger{color:#dc2626;}
+        .dots-wrap{position:relative;display:inline-block;}
+        .overlay-bg{display:none;position:fixed;inset:0;z-index:99;}
+        .overlay-bg.open{display:block;}
+        .rmodal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;justify-content:center;align-items:center;}
+        .rmodal-overlay.open{display:flex;}
+        .rmodal{background:white;border-radius:16px;padding:28px;width:400px;box-shadow:0 8px 32px rgba(0,0,0,0.18);}
+        .rmodal h3{margin:0 0 16px;font-size:17px;color:#111827;}
+        .reason-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+        .reason-opt{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;cursor:pointer;font-size:14px;color:#374151;}
+        .reason-opt:hover{border-color:#2563eb;background:#f0f7ff;}
+        .reason-opt input{accent-color:#2563eb;}
+        .rmodal-btns{display:flex;gap:10px;justify-content:flex-end;}
+        .rbtn-cancel{background:white;border:1px solid #d1d5db;color:#374151;padding:9px 20px;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;}
+        .rbtn-submit{background:#dc2626;color:white;border:none;padding:9px 20px;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;}
+        .rbtn-submit:hover{background:#b91c1c;}
 
     </style>
-
 </head>
 <body>
-
-    <div class="container">
-
-        <div class="sidebar">
-
-            <h2 class="logo">
-                CampusCoord
-            </h2>
-
-            <div
-                class="menu-item"
-                id="dashboardBtn"
-            >
-                Dashboard
-            </div>
-
-            <div
-                class="menu-item"
-                id="reportIssueBtn"
-            >
-                Report Issue
-            </div>
-
-            <div class="menu-item">
-                My Issues
-            </div>
-
-            <div class="menu-item">
-                Leaderboard
-            </div>
-
-            <div class="menu-item">
-                Resolved
-            </div>
-
-            <div class="logout-section">
-
-                <div
-                    class="menu-item logout"
-                    id="logoutBtn"
-                >
-                    Logout
-                </div>
-
-            </div>
-
+<div class="container">
+    <div class="sidebar">
+        <h2 class="logo">CampusCoord</h2>
+        <div class="menu-item" id="dashboardBtn">Dashboard</div>
+        <div class="menu-item" id="reportIssueBtn">Report Issue</div>
+        <div
+            class="menu-item"
+            id="myProfileBtn"
+        >
+            My Profile
         </div>
-
+        <div class="menu-item" id="leaderboardBtn">Leaderboard</div>
+        <div class="menu-item" id="resolvedBtn">Resolved</div>
+        <div class="logout-section">
+            <div class="menu-item logout" id="logoutBtn">Logout</div>
+        </div>
+    </div>
 
     <div class="main-content">
 
+        <!-- Issue Detail Card -->
         <div class="issue-detail">
+            <div class="title-row">
 
-            <h1 id="title"></h1>
-
-            <img
-                id="issueImage"
-                style="
-                    width:100%;
-                    max-height:350px;
-                    object-fit:cover;
-                    border-radius:10px;
-                    margin-bottom:15px;
-                "
-            />
-
-            <p id="description"></p>
-
-            <p id="category"></p>
-
-            <p id="location"></p>
-
-            <p id="reportedBy"></p>
-
-            <p id="createdOn"></p>
-
-            <p id="status"></p>
-
-            <p id="upvotes"></p>
-
-            <button id="upvoteBtn">
-                Upvote
-            </button>
-
-            <button id="claimBtn">
-                Claim Issue
-            </button>
-
-            <p id="claimStatus"></p>    
-
-            <p id="claimedBy"></p>
-
-            <p id="deadline"></p>
-
-            <input
-                type="file"
-                id="proofFile"
-            />
-
-            <button id="uploadProofBtn">
-                Upload Proof
-            </button>
-
-            <button
-                id="deleteProofBtn"
-                style="
-                    background:#b91c1c;
-                "
-            >
-                Delete Proof
-            </button>
-
-            <h3>Proof Image</h3>
-
-            <img
-                id="proofImage"
-                style="
-                    width:100%;
-                    max-height:350px;
-                    object-fit:cover;
-                    border-radius:10px;
-                    display:none;
-                "
-            >
-
-
-            <hr>
-
-            <h3>Verification</h3>
-
-            <button onclick="verifyIssue('solved')">
-                Solved
-            </button>
-
-            <button onclick="verifyIssue('partial')">
-                Partial
-            </button>
-
-            <button onclick="verifyIssue('not solved')">
-                Not Solved
-            </button>
-
-            <div id="verificationSummary">
+                <div style="
+                        display:flex;
+                        justify-content:space-between;
+                        align-items:flex-start;
+                        width:100%;
+                    ">
+            <h1 id="title" style="margin:0;"></h1>
+            <div class="dots-wrap" id="issueDots">
+                <button class="dots-btn" onclick="toggleMenu('issueMenu','issueOverlay')">⋮</button>
+                <div class="dots-menu" id="issueMenu">
+                    <div class="dots-menu-item danger" onclick="closeMenu('issueMenu','issueOverlay');openRModal('issue')">🚩 Report Issue</div>
+                    <div class="dots-menu-item" onclick="copyIssueLink();closeMenu('issueMenu','issueOverlay')">🔗 Copy Link</div>
+                </div>
             </div>
+            <div class="overlay-bg" id="issueOverlay" onclick="closeMenu('issueMenu','issueOverlay')"></div>
+        </div>
 
-            <h3 id="finalDecision"></h3>
-
-            <hr>
-
-
-            <h3>Comments</h3>
-
-            <input
-                id="commentInput"
-                placeholder="Write comment"
-            />
-
-            <button id="commentBtn">
-                Add Comment
-            </button>
-
-            <div id="commentsContainer">
 
             </div>
 
+
+            <img id="issueImage" style="display:none;" />
+
+            <p id="description" style="color:#374151; line-height:1.6; margin:0 0 16px;"></p>
+
+            <div class="meta-grid">
+                <div class="meta-item"><strong>Category</strong><span id="category"></span></div>
+                <div class="meta-item"><strong>Location</strong><span id="location"></span></div>
+                <div class="meta-item"><strong>Reported By</strong><span id="reportedBy"></span></div>
+                <div class="meta-item"><strong>Created On</strong><span id="createdOn"></span></div>
+                <div class="meta-item"><strong>Status</strong><span id="status"></span></div>
+            </div>
+
+            <div class="action-row">
+                <button id="upvoteBtn">👍 Upvote</button>
+                <div class="upvote-stat">⬆️ <span id="upvotes">0</span> upvotes</div>
+                <button id="claimBtn">Claim Issue</button>
+                <span id="claimStatus" style="font-size:13px; color:#6b7280;"></span>
+            </div>
+
+            <p id="claimedBy" style="font-size:14px; color:#374151;"></p>
+            <p id="deadline" style="font-size:14px; color:#374151;"></p>
+
+            <!-- Claim Section -->
+            <div id="claimSection" style="display:none;">
+                <div class="claim-card">
+                    <h3>📎 Proof of Resolution</h3>
+                    <div class="proof-upload-row">
+                        <input type="file" id="proofFile" />
+                        <button id="uploadProofBtn">Upload Proof</button>
+                        <button id="deleteProofBtn" style="background:#b91c1c;">Delete Proof</button>
+                    </div>
+                    <img id="proofImage" style="display:none;" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Verification Card -->
+        <div class="verification-card" id="claimSectionVerify" style="display:none;">
+            <div class="verification-header">
+                <div class="verification-title">
+                    <div class="verify-icon">✔</div>
+                    Resolution Verification
+                </div>
+                <div class="total-votes-box">
+                    <div class="vote-num" id="totalVotesNum">0</div>
+                    <div class="vote-label">Total Votes</div>
+                </div>
+            </div>
+            <p class="verification-desc">
+                As a campus member, your feedback helps confirm if this issue is actually resolved. Please vote based on current site conditions.
+            </p>
+            <div class="vote-buttons">
+                <button class="vote-btn vote-btn-solved" onclick="verifyIssue('solved')">
+                    <span class="vote-emoji">😊</span>Fully Solved
+                </button>
+                <button class="vote-btn vote-btn-partial" onclick="verifyIssue('partial')">
+                    <span class="vote-emoji">😐</span>Partially Solved
+                </button>
+                <button class="vote-btn vote-btn-notsolv" onclick="verifyIssue('not solved')">
+                    <span class="vote-emoji">😵</span>Not Solved
+                </button>
+            </div>
+            <div class="verification-summary" id="verificationSummary"></div>
+            <div id="finalDecision"></div>
+        </div>
+
+        <!-- Comments Card -->
+        <div class="comments-card">
+            <h3>💬 Comments</h3>
+            <div class="comment-input-row">
+                <input id="commentInput" placeholder="Write a comment..." />
+                <button id="commentBtn">Add Comment</button>
+            </div>
+            <div id="commentsContainer"></div>
         </div>
 
     </div>
-    </div>
-    <script>    
-        const params =
-        new URLSearchParams(window.location.search)
-        const issueId = params.get("id")
+</div>
 
-        console.log(issueId)
-        async function getIssueDetail(){
-            const response = await fetch(
-                `http://127.0.0.1:8000/issues/${issueId}`
-            )
-            const data = await response.json()
+<script>
+    const params = new URLSearchParams(window.location.search)
+    const issueId = params.get("id")
 
-            console.log(data)
+    console.log(issueId)
 
+    async function getIssueDetail(){
+        const response = await fetch(`http://127.0.0.1:8000/issues/${issueId}`)
+        const data = await response.json()
+        console.log(data)
 
-            title.innerText = data.title
+        title.innerText = data.title
+        if(data.image_url){
 
             issueImage.src =
             `http://127.0.0.1:8000/${data.image_url}`
 
-            description.innerText = data.description
+            issueImage.style.display = "block"
 
-            category.innerHTML =
-            `
-            <strong>Category:</strong>
-
-            <span class="category-badge">
-            ${data.category}
-            </span>
-            `
-
-            issueLocation.innerHTML =
-            `<strong>Location:</strong> ${data.location}`
-
-            status.innerHTML =
-            `<strong>Status:</strong> ${data.status}`
-
-            if(data.status === "in_progress"){
-
-                    claimStatus.innerText =
-                    "This issue is currently claimed"
-
-                    claimBtn.disabled = true
-
-                    claimBtn.innerText = "Already Claimed"
-                }
-            else{
-
-                claimStatus.innerText = ""
-
-                claimBtn.disabled = false
-
-                claimBtn.innerText = "Claim Issue"
+            issueImage.onerror = function(){
+                issueImage.style.display = "none"
             }
 
-            upvotes.innerHTML =
-            `<strong>Upvotes:</strong> ${data.upvotes}`
+        }else{
 
-            reportedBy.innerHTML =
-            `<strong>Reported By:</strong> ${data.creator_name}`
-
-            createdOn.innerHTML =
-            `<strong>Created On:</strong>
-            ${new Date(data.created_at).toLocaleDateString()}`                                              
-
-
+            issueImage.style.display = "none"
         }
-        const title =
-        document.getElementById("title")
 
-        const issueImage =
-        document.getElementById("issueImage")
+        description.innerText = data.description
 
-        const description =
-        document.getElementById("description")
+        document.querySelector("#category span") ?
+            document.getElementById("category").innerText = data.category :
+            document.getElementById("category").innerText = data.category
 
-        const category =
-        document.getElementById("category")
+        // Use the span inside meta-item
+        document.getElementById("category").innerHTML =
+            `<span class="category-badge">${data.category}</span>`
+        document.getElementById("location").innerText = data.location
 
-        const issueLocation =
-        document.getElementById("location")
+        const st = data.status
+        let stLabel = st, stClass = "status-open"
+        if(st === "in_progress"){ stLabel="In Progress"; stClass="status-progress" }
+        if(st === "resolved"){ stLabel="Resolved"; stClass="status-resolved" }
+        document.getElementById("status").innerHTML =
+            `<span class="status-badge ${stClass}">${stLabel}</span>`
 
-        const status =
-        document.getElementById("status")
+        upvotesSpan.innerText = data.upvotes
+        reportedBy.innerText = data.creator_name
+        createdOn.innerText = new Date(data.created_at).toLocaleDateString()
 
-        const reportedBy =
-        document.getElementById("reportedBy")
+        if(data.status === "in_progress" || data.status === "resolved"){
+            claimStatus.innerText = "This issue is currently claimed"
+            claimBtn.disabled = true
+            claimBtn.innerText = "Already Claimed"
+        } else {
+            claimStatus.innerText = ""
+            claimBtn.disabled = false
+            claimBtn.innerText = "Claim Issue"
+        }
+    }
 
-        const createdOn =
-        document.getElementById("createdOn")
+    const title = document.getElementById("title")
+    const issueImage = document.getElementById("issueImage")
+    const description = document.getElementById("description")
+    const issueLocation = document.getElementById("location")
+    const status = document.getElementById("status")
+    const reportedBy = document.getElementById("reportedBy")
+    const createdOn = document.getElementById("createdOn")
+    const upvotesSpan = document.getElementById("upvotes")
+    const upvoteBtn = document.getElementById("upvoteBtn")
+    const claimBtn = document.getElementById("claimBtn")
+    const claimStatus = document.getElementById("claimStatus")
+    const commentInput = document.getElementById("commentInput")
+    const commentBtn = document.getElementById("commentBtn")
+    const commentsContainer = document.getElementById("commentsContainer")
+    const claimedBy = document.getElementById("claimedBy")
+    const verificationSummary = document.getElementById("verificationSummary")
+    const deadline = document.getElementById("deadline")
+    const proofImage = document.getElementById("proofImage")
+    const proofFile = document.getElementById("proofFile")
+    const uploadProofBtn = document.getElementById("uploadProofBtn")
+    const deleteProofBtn = document.getElementById("deleteProofBtn")
+    const claimSection = document.getElementById("claimSection")
+    const claimSectionVerify = document.getElementById("claimSectionVerify")
 
-        const upvotes =
-        document.getElementById("upvotes")
+    upvoteBtn.addEventListener("click", async function(){
+        const token = localStorage.getItem("token")
+        const response = await fetch("http://127.0.0.1:8000/vote", {
+            method:"POST",
+            headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+            body: JSON.stringify({issue_id: Number(issueId)})
+        })
+        const data = await response.json()
+        console.log(data)
+        alert(data.message)
+        getIssueDetail()
+    })
 
-        const upvoteBtn =
-        document.getElementById("upvoteBtn")
+    claimBtn.addEventListener("click", async function(){
+        const token = localStorage.getItem("token")
+        const response = await fetch("http://127.0.0.1:8000/claim", {
+            method:"POST",
+            headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+            body: JSON.stringify({issue_id: Number(issueId)})
+        })
+        const data = await response.json()
+        console.log(data)
+        alert(data.message)
+        claimStatus.innerText = data.message
+        getIssueDetail()
+        getClaimInfo()
+    })
 
-        const claimBtn =
-        document.getElementById("claimBtn")
+    commentBtn.addEventListener("click", async function(){
+        if(commentInput.value.trim() === ""){ alert("Comment cannot be empty"); return }
+        const token = localStorage.getItem("token")
+        const response = await fetch("http://127.0.0.1:8000/comments", {
+            method:"POST",
+            headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+            body: JSON.stringify({issue_id: Number(issueId), comment: commentInput.value})
+        })
+        const data = await response.json()
+        console.log(data)
+        alert(data.message)
+        commentInput.value = ""
+        getComments()
+    })
 
-        const claimStatus =
-        document.getElementById("claimStatus")
-
-        upvoteBtn.addEventListener(
-            "click",
-
-            async function(){
-
-                const token =
-                localStorage.getItem("token")
-
-                const response = await fetch(
-                    "http://127.0.0.1:8000/vote",
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${token}`
-                        },
-
-                        body: JSON.stringify({
-                            issue_id: Number(issueId)
-                        })
-                    }
-                )
-
-                const data = await response.json()
-
-                console.log(data)
-
-            alert(data.message)
-
-                getIssueDetail()
-            }
-        )
-        
-
-        claimBtn.addEventListener(
-            "click",
-
-            async function(){
-
-                const token =
-                localStorage.getItem("token")
-
-                const response = await fetch(
-                    "http://127.0.0.1:8000/claim",
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${token}`
-                        },
-
-                        body: JSON.stringify({
-                            issue_id: Number(issueId)
-                        })
-                    }
-                )
-
-                const data = await response.json()
-
-                console.log(data)
-
-alert(data.message)
-
-                claimStatus.innerText =
-                data.message
-
-                getIssueDetail()
-                getClaimInfo()
-            }
-        )
-
-
-        const commentInput =
-        document.getElementById("commentInput")
-
-        const commentBtn =
-        document.getElementById("commentBtn")
-
-        const commentsContainer =
-        document.getElementById("commentsContainer")
-
-        const claimedBy =
-        document.getElementById("claimedBy")
-
-        const verificationSummary =
-        document.getElementById("verificationSummary")
-
-        const deadline =
-        document.getElementById("deadline")
-
-        const proofImage =
-        document.getElementById("proofImage")
-
-        const proofFile =
-        document.getElementById("proofFile")
-
-        const uploadProofBtn =
-        document.getElementById("uploadProofBtn")
-
-        const deleteProofBtn =
-        document.getElementById("deleteProofBtn")
-
-
-        commentBtn.addEventListener(
-            "click",
-
-            async function(){
-
-                if(commentInput.value.trim() === ""){
-
-                alert("Comment cannot be empty")
-
-                return
-            }
-
-                const token =
-                localStorage.getItem("token")
-
-                const response = await fetch(
-                    "http://127.0.0.1:8000/comments",
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${token}`
-                        },
-
-                        body: JSON.stringify({
-                            issue_id: Number(issueId),
-                            comment: commentInput.value
-                        })
-                    }
-                )
-
-                const data = await response.json()
-
-                console.log(data)
-
-                alert(data.message)
-
-
-                commentInput.value = ""
-
-                getComments()
-            }
-        )
-
-
-        function getTimeAgo(dateString){
-
+    function getTimeAgo(dateString){
         const now = new Date()
-
         const created = new Date(dateString)
-
-        const seconds =
-        Math.floor((now - created) / 1000)
-
-        const minutes =
-        Math.floor(seconds / 60)
-
-        const hours =
-        Math.floor(minutes / 60)
-
-        const days =
-        Math.floor(hours / 24)
-
-        const months =
-        Math.floor(days / 30)
-
-        if(months > 0){
-            return months + " month ago"
-        }
-
-        if(days > 0){
-            return days + " day ago"
-        }
-
-        if(hours > 0){
-            return hours + " hour ago"
-        }
-
-        if(minutes > 0){
-            return minutes + " min ago"
-        }
-
+        const seconds = Math.floor((now - created)/1000)
+        const minutes = Math.floor(seconds/60)
+        const hours = Math.floor(minutes/60)
+        const days = Math.floor(hours/24)
+        const months = Math.floor(days/30)
+        if(months > 0) return months+" month ago"
+        if(days > 0) return days+" day ago"
+        if(hours > 0) return hours+" hour ago"
+        if(minutes > 0) return minutes+" min ago"
         return "Just now"
     }
 
-
-
-
-        async function getComments(){
-
-            const response = await fetch(
-                `http://127.0.0.1:8000/comments/${issueId}`
-            )
-
-            const data = await response.json()
-
-            commentsContainer.innerHTML = ""
-
-            for(let comment of data){
-
-                commentsContainer.innerHTML += `
-
-                    <div
-                        style="
-                            padding:10px;
-                            border:1px solid lightgray;
-                            margin-top:10px;
-                            border-radius:8px;
-                        "
-                    >
-
-                        <h4 style="margin-bottom:5px;">
-                            ${comment.name}
-                        </h4>
-
-                        <p style="color:#444;">
-                            ${comment.comment}
-                        </p>
-
-                        <p
-                        style="
-                        font-size:12px;
-                        color:gray;
-                        margin-top:5px;
-                        "
-                        >   
-                        ${getTimeAgo(comment.created_at)}
-                        </p>
-
+    async function getComments(){
+        const response = await fetch(`http://127.0.0.1:8000/comments/${issueId}`)
+        const data = await response.json()
+        commentsContainer.innerHTML = ""
+        for(let comment of data){
+            const cid = comment.id
+            commentsContainer.innerHTML += `
+            <div class="comment-item">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                    <h4 style="margin:0 0 6px;">${comment.name}</h4>
+                    <div class="dots-wrap">
+                        <button class="dots-btn" onclick="toggleMenu('cmenu${cid}','covl${cid}')">⋮</button>
+                        <div class="dots-menu" id="cmenu${cid}">
+                            <div class="dots-menu-item danger" onclick="closeMenu('cmenu${cid}','covl${cid}');openRModal('comment',${cid})">
+                                Report Comment
+                            </div>
+                        </div>
+                        <div class="overlay-bg" id="covl${cid}" onclick="closeMenu('cmenu${cid}','covl${cid}')"></div>
                     </div>
-
-                `
-            }
+                </div>
+                <p style="margin:0 0 6px;color:#374151;font-size:14px;line-height:1.5;">${comment.comment}</p>
+                <span class="comment-time">${getTimeAgo(comment.created_at)}</span>
+            </div>`
         }
+    }
 
-        async function getClaimInfo(){
+    async function getClaimInfo(){
+        const response = await fetch(`http://127.0.0.1:8000/claims/${issueId}`)
+        const data = await response.json()
+        console.log(data)
+        if(data.claimed_by){
+            claimSection.style.display = "block"
+            claimSectionVerify.style.display = "block"
+            claimedBy.innerHTML = `<strong>Claimed By:</strong> ${data.claimed_by}`
+            const currentUserName =
+            localStorage.getItem("name")
 
-            const response = await fetch(
-                `http://127.0.0.1:8000/claims/${issueId}`
-            )
+            if(currentUserName === data.claimed_by){
 
-            const data = await response.json()
+                proofFile.style.display = "inline-block"
+                uploadProofBtn.style.display = "inline-block"
+                deleteProofBtn.style.display = "inline-block"
 
-            console.log(data)
+            }else{
 
-            if(data.claimed_by){
-
-                claimedBy.innerHTML =
-                `<strong>Claimed By:</strong> ${data.claimed_by}`
-
-                const formattedDate =
-                new Date(data.deadline).toLocaleString()
-
-                deadline.innerHTML =
-                `<strong>Deadline:</strong> ${formattedDate}`
-
-                if(data.proof_image_url){
-
-                    proofImage.src =
-                    `http://127.0.0.1:8000/${data.proof_image_url}?t=${Date.now()}`
-
-                    proofImage.style.display = "block"
-
-                    deleteProofBtn.style.display = "inline-block"
-                }
-                else{
-
-                    proofImage.style.display = "none"
-
-                    deleteProofBtn.style.display = "none"
-                }
+                proofFile.style.display = "none"
+                uploadProofBtn.style.display = "none"
+                deleteProofBtn.style.display = "none"
             }
-        }
 
+            deadline.innerHTML = `<strong>Deadline:</strong> ${new Date(data.deadline).toLocaleString()}`
+            if(data.proof_image_url){
+                proofImage.src = `http://127.0.0.1:8000/${data.proof_image_url}?t=${Date.now()}`
+                proofImage.style.display = "block"
+                
+            } else {
+                proofImage.style.display = "none"
+                deleteProofBtn.style.display = "none"
+            }
+        } else {
+            claimSection.style.display = "none"
+            claimSectionVerify.style.display = "none"
+        }
+    }
 
     async function getVerificationSummary(){
+        const response = await fetch(`http://127.0.0.1:8000/verification/${issueId}`)
+        const data = await response.json()
+        const totalVotes = data.solved + data.partial + data["not solved"]
+        document.getElementById("totalVotesNum").innerText = totalVotes
+
+        const solvedPct = totalVotes > 0 ? (data.solved / totalVotes) * 100 : 0
+        const finalDecision = document.getElementById("finalDecision")
+
+        if(totalVotes >= 5){
+            if(solvedPct >= 60){
+                finalDecision.innerText = "✅ Community Status: Solved"
+                finalDecision.className = "final-decision"
+                finalDecision.style.background = "#dcfce7"
+                finalDecision.style.color = "#166534"
+            } else {
+                finalDecision.innerText = "⏳ Community Status: Pending"
+                finalDecision.className = "final-decision"
+                finalDecision.style.background = "#fef3c7"
+                finalDecision.style.color = "#92400e"
+            }
+        } else {
+            finalDecision.innerText = `Need at least 5 verification votes (${totalVotes}/5)`
+            finalDecision.className = "final-decision"
+            finalDecision.style.background = "#fee2e2"
+            finalDecision.style.color = "#991b1b"
+        }
+
+        verificationSummary.innerHTML = `
+            <div class="vsummary-item">
+                <div class="vsummary-num" style="color:#166534;">${data.solved}</div>
+                <div class="vsummary-label">Solved</div>
+            </div>
+            <div class="vsummary-item">
+                <div class="vsummary-num" style="color:#92400e;">${data.partial}</div>
+                <div class="vsummary-label">Partial</div>
+            </div>
+            <div class="vsummary-item">
+                <div class="vsummary-num" style="color:#991b1b;">${data["not solved"]}</div>
+                <div class="vsummary-label">Not Solved</div>
+            </div>`
+    }
+
+    async function verifyIssue(status){
+        const token = localStorage.getItem("token")
+        const response = await fetch("http://127.0.0.1:8000/verify", {
+            method:"POST",
+            headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+            body: JSON.stringify({issue_id: Number(issueId), status: status})
+        })
+        const data = await response.json()
+        console.log(data)
+        alert(data.message)
+        getVerificationSummary()
+        getIssueDetail()
+    }
+
+    uploadProofBtn.addEventListener("click", async function(){
+
+    if(claimBtn.disabled === false){
+        alert("Please claim issue first")
+        return
+    }
+
+    const file = proofFile.files[0]
+
+    if(!file){
+        alert("Choose image first")
+        return
+    }
+
+    const token = localStorage.getItem("token")
+
+    const formData = new FormData()
+    formData.append("file", file)
+
+    const response = await fetch(
+        `http://127.0.0.1:8000/upload-proof?issue_id=${issueId}`,
+        {
+            method:"POST",
+            headers:{
+                Authorization: `Bearer ${token}`
+            },
+            body:formData
+        }
+    )
+
+    const data = await response.json()
+
+    alert(data.message || "Proof uploaded")
+
+    getClaimInfo()
+})
+
+    deleteProofBtn.addEventListener("click", async function(){
+
+        const token = localStorage.getItem("token")
 
         const response = await fetch(
-            `http://127.0.0.1:8000/verification/${issueId}`
+            `http://127.0.0.1:8000/delete-proof/${issueId}`,
+            {
+                method:"DELETE",
+                headers:{
+                    Authorization: `Bearer ${token}`
+                }
+            }
         )
 
         const data = await response.json()
 
-        const totalVotes =
-            data.solved +
-            data.partial +
-            data["not solved"]
-
-            const solvedPercentage =
-            (data.solved / totalVotes) * 100
-
-            const finalDecision =
-                document.getElementById("finalDecision")
-
-                if(totalVotes >= 5){
-
-                    if(solvedPercentage >= 60){
-
-                        finalDecision.innerText =
-                        "Community Status: Solved"
-
-                        finalDecision.style.color = "green"
-                    }
-
-                    else{
-
-                        finalDecision.innerText =
-                        "Community Status: Pending"
-
-                        finalDecision.style.color = "orange"
-                    }
-
-                }
-                else{
-
-                    finalDecision.innerText =
-                    "Need at least 5 verification votes"
-
-                    finalDecision.style.color = "red"
-                }
-
-
-        verificationSummary.innerHTML = `
-
-            <p>
-                Solved: ${data.solved}
-            </p>
-
-            <p>
-                Partial: ${data.partial}
-            </p>
-
-            <p>
-                Not Solved: ${data["not solved"]}
-            </p>
-
-        `
-}
-
-        async function verifyIssue(status){
-
-            const token =
-            localStorage.getItem("token")
-
-            const response = await fetch(
-                "http://127.0.0.1:8000/verify",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-
-                    body: JSON.stringify({
-                        issue_id: Number(issueId),
-                        status: status
-                    })
-                }
-            )
-
-            const data = await response.json()
-
-            console.log(data)
-
         alert(data.message)
 
-            getVerificationSummary()
-        }
-
-        uploadProofBtn.addEventListener(
-            "click",
-
-                
-
-            async function(){
-
-                if(claimBtn.disabled === false){
-
-                    alert("Please claim issue first")
-                    return
-                }
-
-                const file =
-                proofFile.files[0]
-
-                if(!file){
-
-                    alert("Choose image first")
-                    return
-                }
-
-                const formData =
-                new FormData()
-
-                formData.append(
-                    "file",
-                    file
-                )
-
-                const response = await fetch(
-                    `http://127.0.0.1:8000/upload-proof?issue_id=${issueId}`,
-                    {
-                        method: "POST",
-                        body: formData
-                    }
-                )
-
-                const data =
-                await response.json()
-
-                alert("Proof uploaded")
-
-                getClaimInfo()
-            }
-        )
-
-
-        deleteProofBtn.addEventListener(
-            "click",
-
-            async function(){
-
-                const response = await fetch(
-                    `http://127.0.0.1:8000/delete-proof/${issueId}`,
-                    {
-                        method: "DELETE"
-                    }
-                )
-
-                const data = await response.json()
-
-                alert(data.message)
-
-                getClaimInfo()
-            }
-        )
-
-        getIssueDetail()
-        getComments()
         getClaimInfo()
-        getVerificationSummary()
+    })
+
+    getIssueDetail()
+    getComments()
+    getClaimInfo()
+    getVerificationSummary()
+
+    
+
+    document.getElementById("logoutBtn").addEventListener("click", function(){
+        localStorage.removeItem("token")
+        window.location.href = "login.html"
+    })
+    document.getElementById("reportIssueBtn").addEventListener("click", function(){
+        window.location.href = "report-issue.html"
+    })
+    document.getElementById("leaderboardBtn").addEventListener("click", function(){
+        window.location.href = "leaderboard.html"
+    })
 
 
-        const logoutBtn =
-        document.getElementById("logoutBtn")
+    
 
-        logoutBtn.addEventListener(
+    const reportModal =
+    document.getElementById("reportModal")
+
+    const submitReportBtn =
+        document.getElementById("submitReportBtn")
+
+    const closeReportBtn =
+        document.getElementById("closeReportBtn")
+
+    if(closeReportBtn){
+        closeReportBtn.addEventListener(
             "click",
             function(){
-
-                localStorage.removeItem("token")
-                window.location.href = "login.html"
+                reportModal.style.display = "none"
             }
         )
+    }
 
-        const reportIssueBtn =
-        document.getElementById("reportIssueBtn")
 
-        reportIssueBtn.addEventListener(
+
+    const myProfileBtn =
+        document.getElementById("myProfileBtn")
+
+        myProfileBtn.addEventListener(
             "click",
             function(){
+
                 window.location.href =
-                "report-issue.html"
+                "My_profile.html"
             }
         )
+        
+    document.getElementById("resolvedBtn").addEventListener("click", function(){
+        window.location.href = "resolved.html"
+    })
+    document.getElementById("dashboardBtn").addEventListener("click", function(){
+        window.location.href = "dashboard.html"
+    })
+</script>
 
 
-        const dashboardBtn =
-        document.getElementById("dashboardBtn")
+<div
+    id="reportModal"
+    style="
+        display:none;
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,0.5);
+        z-index:1000;
+    "
+>
 
-        dashboardBtn.addEventListener(
-            "click",
-            function(){
-                window.location.href =
-                "dashboard.html"
-            }
-        )
+    <div
+        style="
+            background:white;
+            width:450px;
+            margin:100px auto;
+            padding:24px;
+            border-radius:12px;
+        "
+    >
 
+        <h3>Report Issue</h3>
+
+        <label>
+            <input
+                type="radio"
+                name="reportReason"
+                value="Fake Issue"
+            >
+            Fake Issue
+        </label>
+
+        <br><br>
+
+        <label>
+            <input
+                type="radio"
+                name="reportReason"
+                value="Spam"
+            >
+            Spam
+        </label>
+
+        <br><br>
+
+        <label>
+            <input
+                type="radio"
+                name="reportReason"
+                value="Abuse"
+            >
+            Abuse
+        </label>
+
+        <br><br>
+
+        <label>
+            <input
+                type="radio"
+                name="reportReason"
+                value="Duplicate Issue"
+            >
+            Duplicate Issue
+        </label>
+
+        <br><br>
+
+        <label>
+            <input
+                type="radio"
+                name="reportReason"
+                value="Other"
+            >
+            Other
+        </label>
+
+        <br><br>
+
+        <textarea
+            id="otherReason"
+            placeholder="Optional details..."
+            style="
+                width:100%;
+                height:80px;
+            "
+        ></textarea>
+
+        <br><br>
+
+        <button id="submitReportBtn">
+            Submit Report
+        </button>
+
+        <button id="closeReportBtn">
+            Cancel
+        </button>
+
+    </div>
+
+</div>
+
+
+    <!-- Report Modal -->
+    <div class="rmodal-overlay" id="rModalOverlay">
+        <div class="rmodal">
+            <h3 id="rModalTitle">🚩 Report</h3>
+            <div class="reason-opts">
+                <label class="reason-opt"><input type="radio" name="reportReason" value="Fake Issue"> Fake Issue</label>
+                <label class="reason-opt"><input type="radio" name="reportReason" value="Spam"> Spam</label>
+                <label class="reason-opt"><input type="radio" name="reportReason" value="Abuse"> Abuse</label>
+                <label class="reason-opt"><input type="radio" name="reportReason" value="Duplicate Issue"> Duplicate Issue</label>
+                <label class="reason-opt"><input type="radio" name="reportReason" value="Other"> Other</label>
+            </div>
+            <div class="rmodal-btns">
+                <button class="rbtn-cancel" onclick="closeRModal()">Cancel</button>
+                <button class="rbtn-submit" onclick="submitReport()">Submit Report</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    let _rType = null, _rTargetId = null;
+
+    function toggleMenu(menuId, ovlId){
+        const allMenus = document.querySelectorAll('.dots-menu');
+        const allOvls = document.querySelectorAll('.overlay-bg');
+        allMenus.forEach(m=>{ if(m.id!==menuId) m.classList.remove('open'); });
+        allOvls.forEach(o=>{ if(o.id!==ovlId) o.classList.remove('open'); });
+        document.getElementById(menuId).classList.toggle('open');
+        document.getElementById(ovlId).classList.toggle('open');
+    }
+    function closeMenu(menuId, ovlId){
+        document.getElementById(menuId).classList.remove('open');
+        document.getElementById(ovlId).classList.remove('open');
+    }
+    function openRModal(type, targetId){
+        _rType = type;
+        _rTargetId = targetId || Number(issueId);
+        document.getElementById('rModalTitle').innerText = type==='issue' ? '🚩 Report Issue' : '🚩 Report Comment';
+        document.querySelectorAll('input[name="reportReason"]').forEach(r=>r.checked=false);
+        document.getElementById('rModalOverlay').classList.add('open');
+    }
+    function closeRModal(){ document.getElementById('rModalOverlay').classList.remove('open'); }
+
+    async function submitReport(){
+        const sel = document.querySelector('input[name="reportReason"]:checked');
+        if(!sel){ alert('Please select a reason.'); return; }
+        const token = localStorage.getItem('token');
+        const url = _rType==='issue' ? 'http://127.0.0.1:8000/report-issue' : 'http://127.0.0.1:8000/report-comment';
+        const body = _rType==='issue'
+            ? {issue_id: _rTargetId, reason: sel.value}
+            : {comment_id: _rTargetId, reason: sel.value};
+        const res = await fetch(url,{
+            method:'POST',
+            headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
+            body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        alert(data.message);
+        closeRModal();
+    }
+
+    function copyIssueLink(){
+        navigator.clipboard.writeText(window.location.href);
+        alert('Link copied!');
+    }
+
+    document.getElementById('rModalOverlay').addEventListener('click',function(e){
+        if(e.target===this) closeRModal();
+    });
     </script>
+
 </body>
 </html>
-

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leaderboard</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#f5f5f5;
+}
+
+.container{
+    display:flex;
+}
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+
+    width:280px;
+    height:100vh;
+
+    padding:20px;
+    box-sizing:border-box;
+
+    background:#e9ecef;
+
+    display:flex;
+    flex-direction:column;
+}
+
+.logo{
+    color:#0d6efd;
+    margin-bottom:40px;
+}
+
+.menu-item{
+    padding:12px;
+    margin-bottom:10px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.menu-item:hover{
+    background:#dbeafe;
+}
+
+.active{
+    background:#dbeafe;
+    color:#0d6efd;
+    font-weight:700;
+}
+
+.logout-section{
+    margin-top:auto;
+    border-top:1px solid #d1d5db;
+    padding-top:20px;
+}
+
+.logout{
+    background:#fee2e2;
+    color:#dc2626;
+    border:1px solid #fecaca;
+    text-align:center;
+    font-weight:600;
+}
+
+.main-content{
+    margin-left:320px;
+    padding:40px;
+    width:100%;
+}
+
+.page-title{
+    font-size:32px;
+    margin-bottom:10px;
+}
+
+.subtitle{
+    color:gray;
+    margin-bottom:40px;
+}
+
+.leaderboard-card{
+    background:white;
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 2px 12px rgba(0,0,0,0.08);
+}
+
+.user-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:18px 25px;
+    border-bottom:1px solid #e5e7eb;
+}
+
+.left-side{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.rank{
+    font-size:22px;
+    font-weight:bold;
+    color:#2563eb;
+    width:60px;
+}
+
+.avatar{
+    width:45px;
+    height:45px;
+
+    border-radius:50%;
+
+    background:#dbeafe;
+    color:#2563eb;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-weight:bold;
+    font-size:18px;
+}
+
+.name{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.right-side{
+    text-align:right;
+}
+
+.points{
+    font-size:22px;
+    font-weight:bold;
+    color:#2563eb;
+}
+
+.solved{
+    color:gray;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+    <div class="sidebar">
+
+        <h2 class="logo">
+            CampusCoord
+        </h2>
+
+        <div
+            class="menu-item"
+            id="dashboardBtn"
+        >
+            Dashboard
+        </div>
+
+        <div
+            class="menu-item"
+            id="reportIssueBtn"
+        >
+            Report Issue
+        </div>
+
+        <div
+            class="menu-item"
+            id="myProfileBtn"
+        >
+            My Profile
+        </div>
+
+        <div
+            class="menu-item active"
+        >
+            Leaderboard
+        </div>
+
+        <div
+            class="menu-item"
+            id="resolvedBtn"
+        >
+            Resolved
+        </div>
+
+        <div class="logout-section">
+
+            <div
+                class="menu-item logout"
+                id="logoutBtn"
+            >
+                Logout
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="main-content">
+
+        <h1 class="page-title">
+            Top Contributors
+        </h1>
+
+        <p class="subtitle">
+            People helping solve campus problems
+        </p>
+
+        <div
+            id="leaderboardContainer"
+            class="leaderboard-card"
+        >
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+async function getLeaderboard(){
+
+    const response =
+    await fetch(
+        "http://127.0.0.1:8000/leaderboard"
+    )
+
+    const data =
+    await response.json()
+
+    const container =
+    document.getElementById(
+        "leaderboardContainer"
+    )
+
+    container.innerHTML = ""
+
+    data.forEach(
+        (user,index)=>{
+
+            container.innerHTML += `
+
+            <div class="user-row">
+
+                <div class="left-side">
+
+                    <div class="rank">
+                        #${index+1}
+                    </div>
+
+                    <div class="avatar">
+                        ${user.name[0].toUpperCase()}
+                    </div>
+
+                    <div>
+
+                        <div class="name">
+                            ${user.name}
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="right-side">
+
+                    <div class="points">
+                        ${user.points}
+                    </div>
+
+                    <div class="solved">
+                        ${user.issues_solved} Issues Solved
+                    </div>
+
+                </div>
+
+            </div>
+
+            `
+        }
+    )
+}
+
+getLeaderboard()
+
+const logoutBtn =
+document.getElementById("logoutBtn")
+
+logoutBtn.addEventListener(
+    "click",
+    function(){
+
+        localStorage.removeItem("token")
+
+        window.location.href =
+        "login.html"
+    }
+)
+
+document
+.getElementById("dashboardBtn")
+.addEventListener(
+    "click",
+    function(){
+
+        window.location.href =
+        "dashboard.html"
+    }
+)
+
+document
+.getElementById("reportIssueBtn")
+.addEventListener(
+    "click",
+    function(){
+
+        window.location.href =
+        "report-issue.html"
+    }
+)
+
+const myProfileBtn =
+document.getElementById("myProfileBtn")
+
+myProfileBtn.addEventListener(
+    "click",
+    function(){
+
+        window.location.href =
+        "My_profile.html"
+    }
+)
+
+document
+.getElementById("resolvedBtn")
+.addEventListener(
+    "click",
+    function(){
+
+        window.location.href =
+        "resolved.html"
+    }
+)
+
+</script>
+
+</body>
+</html>

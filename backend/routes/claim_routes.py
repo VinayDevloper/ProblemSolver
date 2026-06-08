@@ -119,8 +119,33 @@ def get_claim(issue_id: int):
 @router.post("/upload-proof")
 def upload_proof(
     issue_id: int,
-    file: UploadFile = File(...)
+    file: UploadFile = File(...),
+    user = Depends(get_current_user)
 ):
+
+    with engine.connect() as connection:
+
+        claim = connection.execute(
+            text("""
+                SELECT claimed_by
+                FROM claims
+                WHERE issue_id = :issue_id
+            """),
+            {
+                "issue_id": issue_id
+            }
+        ).mappings().first()
+
+        if not claim:
+            return {
+                "message": "Claim not found"
+            }
+
+        if claim["claimed_by"] != user["user_id"]:
+            return {
+                "message": "Only claimer can upload proof"
+            }
+
         file_path = f"uploads/proof_{issue_id}.jpg"
 
         with open(file_path, "wb") as buffer:
@@ -129,30 +154,52 @@ def upload_proof(
                 buffer
             )
 
-        with engine.connect() as connection:
+        connection.execute(
+            text("""
+                UPDATE claims
+                SET proof_image_url = :proof_image_url
+                WHERE issue_id = :issue_id
+            """),
+            {
+                "proof_image_url": file_path,
+                "issue_id": issue_id
+            }
+        )
 
-            connection.execute(
-                text("""
-                    UPDATE claims
-                    SET proof_image_url = :proof_image_url
-                    WHERE issue_id = :issue_id
-                """),
-                {
-                    "proof_image_url": file_path,
-                    "issue_id": issue_id
-                }
-            )
-
-            connection.commit()
+        connection.commit()
 
         return {
             "proof_image_url": file_path
         }
 
 @router.delete("/delete-proof/{issue_id}")
-def delete_proof(issue_id: int):
+def delete_proof(
+    issue_id: int,
+    user = Depends(get_current_user)
+):
 
     with engine.connect() as connection:
+
+        claim = connection.execute(
+            text("""
+                SELECT claimed_by
+                FROM claims
+                WHERE issue_id = :issue_id
+            """),
+            {
+                "issue_id": issue_id
+            }
+        ).mappings().first()
+
+        if not claim:
+            return {
+                "message": "Claim not found"
+            }
+
+        if claim["claimed_by"] != user["user_id"]:
+            return {
+                "message": "Only claimer can delete proof"
+            }
 
         connection.execute(
             text("""
@@ -170,3 +217,76 @@ def delete_proof(issue_id: int):
     return {
         "message": "Proof deleted"
     }
+
+@router.get("/top-contributors")
+def top_contributors():
+
+    with engine.connect() as connection:
+
+        result = connection.execute(
+            text("""
+                SELECT
+                    users.name,
+                    COUNT(*) as resolved_count
+
+                FROM claims
+
+                JOIN users
+                ON claims.claimed_by = users.id
+
+                WHERE claims.status = 'resolved'
+
+                GROUP BY users.id, users.name
+
+                ORDER BY resolved_count DESC
+
+                LIMIT 3
+            """)
+        )
+
+        return result.mappings().all()
+    
+
+@router.get("/leaderboard")
+def leaderboard():
+
+    with engine.connect() as connection:
+
+        result = connection.execute(
+            text("""
+                SELECT
+                    users.name,
+                    COUNT(*) as issues_solved,
+                    COUNT(*) * 50 as points
+
+                FROM claims
+
+                JOIN users
+                ON claims.claimed_by = users.id
+
+                WHERE claims.status = 'resolved'
+
+                GROUP BY users.id, users.name
+
+                ORDER BY points DESC
+            """)
+        )
+
+        return result.mappings().all()
+    
+@router.get("/resolved-issues")
+def get_resolved_issues():
+
+    with engine.connect() as connection:
+
+        result = connection.execute(
+            text("""
+                SELECT *
+
+                FROM issues
+
+                WHERE status = 'resolved'
+            """)
+        )
+
+        return result.mappings().all()
