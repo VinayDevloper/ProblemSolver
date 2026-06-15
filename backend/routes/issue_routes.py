@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from fastapi import Depends
 from fastapi import UploadFile, File
 import shutil
+from fastapi import HTTPException
 
 from backend.routes.auth_routes import (
     get_current_user
@@ -13,11 +14,12 @@ from backend.routes.auth_routes import (
 router = APIRouter()
 
 class IssueCreate(BaseModel):
-    title: str 
-    description: str 
-    category: str 
-    location: str 
+    title: str
+    description: str
+    category: str
+    location: str
     image_url: str | None = None
+    is_anonymous: bool = False
 
 
 @router.post("/issues")
@@ -52,10 +54,26 @@ def create_issue(
         connection.execute(
             text("""
                     INSERT INTO issues
-                    (title, description, category, location, image_url, created_by)
+                    (
+                    title,
+                    description,
+                    category,
+                    location,
+                    image_url,
+                    created_by,
+                    is_anonymous
+                    )
 
                     VALUES
-                    (:title, :description, :category, :location, :image_url, :created_by)
+                    (
+                    :title,
+                    :description,
+                    :category,
+                    :location,
+                    :image_url,
+                    :created_by,
+                    :is_anonymous
+                    )
                 """),
 
                 {
@@ -64,7 +82,8 @@ def create_issue(
                     "category": issue.category,
                     "location": issue.location,
                     "image_url": issue.image_url,
-                    "created_by": user["user_id"]
+                    "created_by": user["user_id"],
+                    "is_anonymous": issue.is_anonymous
                 }
         )
 
@@ -182,7 +201,12 @@ def get_single_issue(issue_id: int):
 
         if issue is None:
             return {"message": "Issue not found"}
+        
+        creator_name = issue["name"]
 
+        if issue["is_anonymous"]:
+            creator_name = "Anonymous Student"
+    
         return {
             "id": issue["id"],
             "title": issue["title"],
@@ -194,7 +218,7 @@ def get_single_issue(issue_id: int):
             "upvotes": issue["upvotes"],
             "created_by": issue["created_by"],
             "created_at": str(issue["created_at"]),
-            "creator_name": issue["name"]
+            "creator_name": creator_name
         }
     
 
@@ -237,3 +261,51 @@ def trending_categories():
         )
 
         return result.mappings().all()
+
+@router.delete("/issues/{issue_id}")
+def delete_issue(
+    issue_id: int,
+    user = Depends(get_current_user)
+):
+
+    with engine.connect() as connection:
+
+        result = connection.execute(
+            text("""
+                SELECT *
+                FROM issues
+                WHERE id = :id
+            """),
+            {
+                "id": issue_id
+            }
+        )
+
+        issue = result.mappings().first()
+
+        if issue is None:
+            return {
+                "message": "Issue not found"
+            }
+
+        if issue["created_by"] != user["user_id"]:
+            raise HTTPException(
+                status_code=403,
+                detail="Not allowed"
+            )
+
+        connection.execute(
+            text("""
+                DELETE FROM issues
+                WHERE id = :id
+            """),
+            {
+                "id": issue_id
+            }
+        )
+
+        connection.commit()
+
+        return {
+            "message": "Issue deleted successfully"
+        }

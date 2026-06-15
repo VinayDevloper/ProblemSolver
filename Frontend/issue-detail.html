@@ -8,6 +8,23 @@
 
         .container{ display:flex; }
 
+        
+        #title{
+            margin-bottom:20px;
+        }
+
+        #title{
+            margin-bottom:20px;
+        }
+
+        .issue-2detail img#issueImage{
+            width:100%;
+            max-height:350px;
+            object-fit:cover;
+            border-radius:12px;
+            margin-bottom:20px;
+        }
+
         .sidebar{
             position:fixed; left:0; top:0;
             width:280px; height:100vh;
@@ -25,6 +42,13 @@
         .logout{
             background:#fee2e2; color:#dc2626;
             border:1px solid #fecaca; font-weight:600; text-align:center;
+        }
+        .vote-icon{
+            width:35px;
+            height:35px;
+            object-fit:contain;
+            display:block;
+            margin:0 auto 10px;
         }
         .logout:hover{ background:#fecaca; }
         .logout-section{ margin-top:auto; padding-top:20px; border-top:1px solid #d1d5db; }
@@ -304,7 +328,8 @@
                         align-items:flex-start;
                         width:100%;
                     ">
-            <h1 id="title" style="margin:0;"></h1>
+            <h1 id="title" style="margin:0 0 20px 0;"></h1>
+            
             <div class="dots-wrap" id="issueDots">
                 <button class="dots-btn" onclick="toggleMenu('issueMenu','issueOverlay')">⋮</button>
                 <div class="dots-menu" id="issueMenu">
@@ -332,6 +357,10 @@
             </div>
 
             <div class="action-row">
+                <button id="deleteIssueBtn"
+                style="background:#dc2626; display:none;">
+                Delete Issue
+                </button>
                 <button id="upvoteBtn">👍 Upvote</button>
                 <div class="upvote-stat">⬆️ <span id="upvotes">0</span> upvotes</div>
                 <button id="claimBtn">Claim Issue</button>
@@ -372,14 +401,37 @@
             </p>
             <div class="vote-buttons">
                 <button class="vote-btn vote-btn-solved" onclick="verifyIssue('solved')">
-                    <span class="vote-emoji">😊</span>Fully Solved
-                </button>
-                <button class="vote-btn vote-btn-partial" onclick="verifyIssue('partial')">
-                    <span class="vote-emoji">😐</span>Partially Solved
-                </button>
-                <button class="vote-btn vote-btn-notsolv" onclick="verifyIssue('not solved')">
-                    <span class="vote-emoji">😵</span>Not Solved
-                </button>
+
+                <img
+                    src="images/Fully_solved.png"
+                    class="vote-icon"
+                >
+
+                Fully Solved
+
+            </button>
+
+            <button class="vote-btn vote-btn-partial" onclick="verifyIssue('partial')">
+
+                <img
+                    src="images/partial_solved.png"
+                    class="vote-icon"
+                >
+
+                Partially Solved
+
+            </button>
+
+            <button class="vote-btn vote-btn-notsolv" onclick="verifyIssue('not solved')">
+
+                <img
+                    src="images/Not_solved.png"
+                    class="vote-icon"
+                >
+
+                Not Solved
+
+            </button>
             </div>
             <div class="verification-summary" id="verificationSummary"></div>
             <div id="finalDecision"></div>
@@ -445,7 +497,17 @@
             `<span class="status-badge ${stClass}">${stLabel}</span>`
 
         upvotesSpan.innerText = data.upvotes
+
         reportedBy.innerText = data.creator_name
+        const currentUserId =
+        localStorage.getItem("user_id")
+
+        if(Number(currentUserId) === data.created_by){
+            deleteIssueBtn.style.display = "inline-block"
+        }
+        else{
+            deleteIssueBtn.style.display = "none"
+        }
         createdOn.innerText = new Date(data.created_at).toLocaleDateString()
 
         if(data.status === "in_progress" || data.status === "resolved"){
@@ -482,6 +544,7 @@
     const deleteProofBtn = document.getElementById("deleteProofBtn")
     const claimSection = document.getElementById("claimSection")
     const claimSectionVerify = document.getElementById("claimSectionVerify")
+    const deleteIssueBtn = document.getElementById("deleteIssueBtn")
 
     upvoteBtn.addEventListener("click", async function(){
         const token = localStorage.getItem("token")
@@ -720,6 +783,44 @@
 
         getClaimInfo()
     })
+
+    deleteIssueBtn.addEventListener(
+    "click",
+
+        async function(){
+
+            const confirmDelete =
+            confirm("Delete this issue?")
+
+            if(!confirmDelete){
+                return
+            }
+
+            const token =
+            localStorage.getItem("token")
+
+            const response =
+            await fetch(
+                `http://127.0.0.1:8000/issues/${issueId}`,
+                {
+                    method:"DELETE",
+
+                    headers:{
+                        Authorization:
+                        `Bearer ${token}`
+                    }
+                }
+            )
+
+            const data =
+            await response.json()
+
+            alert(data.message)
+
+            window.location.href =
+            "dashboard.html"
+        }
+    )
 
     getIssueDetail()
     getComments()

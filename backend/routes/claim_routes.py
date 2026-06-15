@@ -275,18 +275,39 @@ def leaderboard():
         return result.mappings().all()
     
 @router.get("/resolved-issues")
-def get_resolved_issues():
+def get_resolved_issues(sort: str = "newest"):
+
+    if sort == "trending":
+
+        query = """
+            SELECT *
+            FROM issues
+            WHERE status = 'resolved'
+            ORDER BY upvotes DESC
+        """
+
+    elif sort == "oldest":
+
+        query = """
+            SELECT *
+            FROM issues
+            WHERE status = 'resolved'
+            ORDER BY created_at ASC
+        """
+
+    else:
+
+        query = """
+            SELECT *
+            FROM issues
+            WHERE status = 'resolved'
+            ORDER BY created_at DESC
+        """
 
     with engine.connect() as connection:
 
         result = connection.execute(
-            text("""
-                SELECT *
-
-                FROM issues
-
-                WHERE status = 'resolved'
-            """)
+            text(query)
         )
 
         return result.mappings().all()

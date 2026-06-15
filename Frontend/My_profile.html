@@ -249,40 +249,72 @@ async function loadUserInfo(){
     const res = await fetch("http://127.0.0.1:8000/me", {
       headers:{"Authorization":`Bearer ${token}`}
     })
+    
     if(res.ok){
+
       const data = await res.json()
+
       document.getElementById("name").value = data.name || ""
       document.getElementById("email").value = data.email || ""
-      document.getElementById("headerName").innerText = data.name || "User"
-      document.getElementById("headerEmail").innerText = data.email || ""
-      document.getElementById("avatarBig").innerText = (data.name||"U")[0].toUpperCase()
+
+      document.getElementById("headerName").innerText =
+      data.name || "User"
+
+      document.getElementById("headerEmail").innerText =
+      data.email || ""
+
+      document.getElementById("avatarBig").innerText =
+      (data.name || "U")[0].toUpperCase()
+
+      document.getElementById("phone").value =
+      data.phone || ""
+
+      document.getElementById("department").value =
+      data.department || ""
+
+      document.getElementById("year").value =
+      data.year || ""
+
+      document.getElementById("role").value =
+      data.role || "Student"
+
+      document.getElementById("group").value =
+      data.group_name || "None"
+
+      document.getElementById("bio").value =
+      data.bio || ""
     }
+
   } catch(e){ console.log(e) }
-  loadProfile()
-  loadProfile(data.email)
 }
 
-document.getElementById("saveProfileBtn").addEventListener("click", function(){
-  const categories = []
-  document.querySelectorAll(".tag.selected").forEach(t=> categories.push(t.innerText))
-  const profile = {
-    name: document.getElementById("name").value,
-    phone: document.getElementById("phone").value,
-    department: document.getElementById("department").value,
-    year: document.getElementById("year").value,
-    role: document.getElementById("role").value,
-    group: document.getElementById("group").value,
-    bio: document.getElementById("bio").value,
-    categories
-  }
-  localStorage.setItem(
-  `campuscoord_profile_${currentUserEmail}`,
-  JSON.stringify(profile)
-)
-  document.getElementById("headerName").innerText = profile.name || "User"
-  document.getElementById("headerRole").innerText = profile.role || "Student"
-  document.getElementById("avatarBig").innerText = (profile.name||"U")[0].toUpperCase()
-  alert("Profile saved!")
+document.getElementById("saveProfileBtn")
+.addEventListener("click", async function(){
+
+    const profile = {
+        phone: document.getElementById("phone").value,
+        department: document.getElementById("department").value,
+        year: document.getElementById("year").value,
+        role: document.getElementById("role").value,
+        group_name: document.getElementById("group").value,
+        bio: document.getElementById("bio").value
+    }
+
+    const response = await fetch(
+        "http://127.0.0.1:8000/update-profile",
+        {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(profile)
+        }
+    )
+
+    const data = await response.json()
+
+    alert(data.message)
 })
 
 async function getMyIssues(){

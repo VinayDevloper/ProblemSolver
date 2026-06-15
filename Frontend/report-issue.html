@@ -325,9 +325,12 @@
 
             <label for="issueImage" class="upload-box">
 
-                <div style="font-size:40px;">
-                    📷
-                </div>
+                <img
+                    src="images/Upload file.png"
+                    style="
+                        width:70px;
+                    "
+                >
 
                 <h3>Upload Issue Image</h3>
 
@@ -349,7 +352,31 @@
                 hidden
             >
 
-            
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin-top:20px;
+                margin-bottom:20px;
+                padding:15px;
+                border:1px solid #ddd;
+                border-radius:10px;
+                ">
+
+                <div>
+                    <strong>Report Anonymously</strong>
+                    <br>
+                    <small>
+                        Other users cannot see your name.
+                    </small>
+                </div>
+
+                <input
+                    type="checkbox"
+                    id="anonymousCheckbox"
+                    style="width:20px;height:20px;"
+                >
+            </div>
 
             <button id="submitBtn">
                 Submit Report
@@ -436,6 +463,11 @@
 
                 const description =
                 document.getElementById("description").value
+
+                const isAnonymous =
+                document.getElementById(
+                    "anonymousCheckbox"
+                ).checked
 
                 let category =
                 selectedCategory
@@ -527,7 +559,8 @@
                             description: description,
                             category: category,
                             location: location,
-                            image_url: imageUrl
+                            image_url: imageUrl,
+                            is_anonymous: isAnonymous
                         })
                     }
                 )
