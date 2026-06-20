@@ -6,6 +6,9 @@ from fastapi import Depends
 from fastapi import UploadFile, File
 import shutil
 from fastapi import HTTPException
+import cloudinary.uploader
+from backend.cloudinary_config import *
+
 
 from backend.routes.auth_routes import (
     get_current_user
@@ -227,16 +230,13 @@ def get_single_issue(issue_id: int):
 def upload_image(
     file: UploadFile = File(...)
 ):
-    file_path = f"uploads/{file.filename}"
 
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(
-            file.file,
-            buffer
-        )
+    result = cloudinary.uploader.upload(
+        file.file
+    )
 
     return {
-    "image_url": file_path
+        "image_url": result["secure_url"]
     }
 
 @router.get("/trending-categories")

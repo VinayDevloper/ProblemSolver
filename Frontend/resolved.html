@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,6 +21,7 @@
             position: fixed;
             left: 0;
             top: 0;
+            box-sizing: border-box;
             width: 280px;
             height: 100vh;
             padding: 20px;
@@ -31,6 +33,8 @@
         .logo {
             margin-bottom: 40px;
             color: #0d6efd;
+            font-size: 22px;
+            font-weight: 700;
         }
 
         .menu-item {
@@ -39,6 +43,7 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: 500;
+            color: #374151;
         }
 
         .menu-item:hover {
@@ -56,7 +61,6 @@
         .logout-section {
             margin-top: auto;
             padding-top: 20px;
-            padding-bottom: 20px;
             border-top: 1px solid #d1d5db;
         }
 
@@ -66,7 +70,6 @@
             border: 1px solid #fecaca;
             font-weight: 600;
             text-align: center;
-            padding-left: 12px;
         }
 
         .logout:hover {
@@ -144,7 +147,7 @@
             background: white;
             border: none;
             border-radius: 14px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
             margin-bottom: 25px;
         }
 
@@ -164,9 +167,20 @@
             white-space: nowrap;
         }
 
-        .status-open     { background: #dcfce7; color: #166534; }
-        .status-progress { background: #fef3c7; color: #92400e; }
-        .status-resolved { background: #dbeafe; color: #1d4ed8; }
+        .status-open {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-resolved {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
 
         .category-badge {
             background: #dbeafe;
@@ -192,13 +206,25 @@
             padding: 60px 20px;
             background: white;
             border-radius: 14px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
             color: #6b7280;
         }
 
-        .empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; }
-        .empty-state h3 { margin: 0 0 8px; color: #374151; font-size: 18px; }
-        .empty-state p  { margin: 0; font-size: 14px; }
+        .empty-state .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            margin: 0 0 8px;
+            color: #374151;
+            font-size: 18px;
+        }
+
+        .empty-state p {
+            margin: 0;
+            font-size: 14px;
+        }
 
         /* ── Right sidebar ── */
         #rightSidebar {
@@ -218,7 +244,7 @@
             background: white;
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
             box-sizing: border-box;
             width: 100%;
         }
@@ -243,112 +269,113 @@
         }
     </style>
 </head>
+
 <body>
-<div class="container">
+    <div class="container">
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h2 class="logo">CampusCoord</h2>
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2 class="logo">CampusCoord</h2>
 
-        <div class="menu-item" id="dashboardBtn">Dashboard</div>
-        <div class="menu-item" id="reportIssueBtn">Report Issue</div>
-        <div class="menu-item" id="myProfileBtn">My Profile</div>
-        <div class="menu-item" id="leaderboardBtn">Leaderboard</div>
-        <div class="menu-item active">Resolved</div>
+            <div class="menu-item" id="dashboardBtn">Dashboard</div>
+            <div class="menu-item" id="reportIssueBtn">Report Issue</div>
+            <div class="menu-item" id="myProfileBtn">My Profile</div>
+            <div class="menu-item" id="leaderboardBtn">Leaderboard</div>
+            <div class="menu-item active">Resolved</div>
 
-        <div class="logout-section">
-            <div class="menu-item logout" id="logoutBtn">Logout</div>
-        </div>
-    </div>
-
-    <!-- Main -->
-    <div class="main-content">
-
-        <!-- Top bar -->
-        <div class="top-bar">
-            <h1 style="margin:0; white-space:nowrap;">Resolved Issues</h1>
-
-            <div class="filters">
-                <select id="sortSelect">
-                    <option value="newest">Newest</option>
-                    <option value="oldest">Oldest</option>
-                    <option value="trending">Trending</option>
-                </select>
-
-                <select id="categorySelect">
-                    <option value="">All Categories</option>
-                    <option value="Infrastructure">Infrastructure</option>
-                    <option value="Electrical">Electrical</option>
-                    <option value="Water">Water</option>
-                    <option value="Cleanliness">Cleanliness</option>
-                    <option value="Hostel">Hostel</option>
-                    <option value="Mess">Mess</option>
-                    <option value="WiFi">WiFi</option>
-                    <option value="Academics">Academics</option>
-                    <option value="Placements">Placements</option>
-                    <option value="Exam Department">Exam Department</option>
-                    <option value="Environment">Environment</option>
-                    <option value="Animal">Animal</option>
-                    <option value="Events">Events</option>
-                    <option value="Emergency Help">Emergency Help</option>
-                    <option value="Safety">Safety</option>
-                </select>
+            <div class="logout-section">
+                <div class="menu-item logout" id="logoutBtn">Logout</div>
             </div>
         </div>
 
-        <!-- Content wrapper: issues + right sidebar -->
-        <div class="content-wrapper">
+        <!-- Main -->
+        <div class="main-content">
 
-            <div id="issues-container"></div>
+            <!-- Top bar -->
+            <div class="top-bar">
+                <h1 style="margin:0; white-space:nowrap;">Resolved Issues</h1>
 
-            <div id="rightSidebar">
-                <div id="contributorsBox"></div>
+                <div class="filters">
+                    <select id="sortSelect">
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="trending">Trending</option>
+                    </select>
+
+                    <select id="categorySelect">
+                        <option value="">All Categories</option>
+                        <option value="Infrastructure">Infrastructure</option>
+                        <option value="Electrical">Electrical</option>
+                        <option value="Water">Water</option>
+                        <option value="Cleanliness">Cleanliness</option>
+                        <option value="Hostel">Hostel</option>
+                        <option value="Mess">Mess</option>
+                        <option value="WiFi">WiFi</option>
+                        <option value="Academics">Academics</option>
+                        <option value="Placements">Placements</option>
+                        <option value="Exam Department">Exam Department</option>
+                        <option value="Environment">Environment</option>
+                        <option value="Animal">Animal</option>
+                        <option value="Events">Events</option>
+                        <option value="Emergency Help">Emergency Help</option>
+                        <option value="Safety">Safety</option>
+                    </select>
+                </div>
             </div>
 
+            <!-- Content wrapper: issues + right sidebar -->
+            <div class="content-wrapper">
+
+                <div id="issues-container"></div>
+
+                <div id="rightSidebar">
+                    <div id="contributorsBox"></div>
+                </div>
+
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    const token = localStorage.getItem("token")
-    if (!token) { window.location.href = "login.html" }
+    <script>
+        const token = localStorage.getItem("token")
+        if (!token) { window.location.href = "login.html" }
 
-    const issuesContainer = document.getElementById("issues-container")
-    const sortSelect      = document.getElementById("sortSelect")
-    const categorySelect  = document.getElementById("categorySelect")
+        const issuesContainer = document.getElementById("issues-container")
+        const sortSelect = document.getElementById("sortSelect")
+        const categorySelect = document.getElementById("categorySelect")
 
-    /* ── Fetch resolved issues ── */
-    async function getIssues() {
-        const response = await fetch(
-            `http://127.0.0.1:8000/resolved-issues?sort=${sortSelect.value}`
-        )
-        const data = await response.json()
-        issuesContainer.innerHTML = ""
-        let foundIssue = false
+        /* ── Fetch resolved issues ── */
+        async function getIssues() {
+            const response = await fetch(
+                `http://127.0.0.1:8000/resolved-issues?sort=${sortSelect.value}`
+            )
+            const data = await response.json()
+            issuesContainer.innerHTML = ""
+            let foundIssue = false
 
-        for (let issue of data) {
+            for (let issue of data) {
 
-            // Category filter
-            if (categorySelect.value !== "" && issue.category !== categorySelect.value) {
-                continue
-            }
+                // Category filter
+                if (categorySelect.value !== "" && issue.category !== categorySelect.value) {
+                    continue
+                }
 
-            let statusText  = "Resolved"
-            let statusClass = "status-resolved"
+                let statusText = "Resolved"
+                let statusClass = "status-resolved"
 
-            if (issue.status === "in_progress") {
-                statusText  = "In Progress"
-                statusClass = "status-progress"
-            } else if (issue.status === "open") {
-                statusText  = "Open"
-                statusClass = "status-open"
-            }
+                if (issue.status === "in_progress") {
+                    statusText = "In Progress"
+                    statusClass = "status-progress"
+                } else if (issue.status === "open") {
+                    statusText = "Open"
+                    statusClass = "status-open"
+                }
 
-            // FIX: comment_count — use 0 as fallback so it never shows "undefined"
-            const commentCount = issue.comment_count ?? 0
+                // FIX: comment_count — use 0 as fallback so it never shows "undefined"
+                const commentCount = issue.comment_count ?? 0
 
-            foundIssue = true
-            issuesContainer.innerHTML += `
+                foundIssue = true
+                issuesContainer.innerHTML += `
             <div class="issue-card">
                 <div class="issue-header">
                     <h3>${issue.title}</h3>
@@ -380,26 +407,26 @@
 
                 <button onclick="openIssueDetail(${issue.id})">View Details</button>
             </div>`
-        }
+            }
 
-        if (!foundIssue) {
-            const label = categorySelect.value || "this filter"
-            issuesContainer.innerHTML = `
+            if (!foundIssue) {
+                const label = categorySelect.value || "this filter"
+                issuesContainer.innerHTML = `
             <div class="empty-state">
                 <div class="empty-icon">📭</div>
                 <h3>No resolved issues found</h3>
                 <p>There are no resolved issues under <b>${label}</b> right now.</p>
             </div>`
+            }
         }
-    }
 
-    /* ── Top Contributors ── */
-    async function getTopContributors() {
-        const response = await fetch("http://127.0.0.1:8000/top-contributors")
-        const data     = await response.json()
-        const box      = document.getElementById("contributorsBox")
+        /* ── Top Contributors ── */
+        async function getTopContributors() {
+            const response = await fetch("http://127.0.0.1:8000/top-contributors")
+            const data = await response.json()
+            const box = document.getElementById("contributorsBox")
 
-        box.innerHTML = `
+            box.innerHTML = `
         <div class="contributor-card">
             <h3>Top Contributors</h3>
             ${data.map(user => `
@@ -411,61 +438,62 @@
                 <b>${user.resolved_count}</b>
             </div>`).join("")}
         </div>`
-    }
+        }
 
-    /* ── Helpers ── */
-    function getTimeAgo(dateString) {
-        const now     = new Date()
-        const created = new Date(dateString)
-        const seconds = Math.floor((now - created) / 1000)
-        const minutes = Math.floor(seconds / 60)
-        const hours   = Math.floor(minutes / 60)
-        const days    = Math.floor(hours / 24)
-        const months  = Math.floor(days / 30)
+        /* ── Helpers ── */
+        function getTimeAgo(dateString) {
+            const now = new Date()
+            const created = new Date(dateString)
+            const seconds = Math.floor((now - created) / 1000)
+            const minutes = Math.floor(seconds / 60)
+            const hours = Math.floor(minutes / 60)
+            const days = Math.floor(hours / 24)
+            const months = Math.floor(days / 30)
 
-        if (months  > 0) return months  + " month ago"
-        if (days    > 0) return days    + " day ago"
-        if (hours   > 0) return hours   + " hour ago"
-        if (minutes > 0) return minutes + " min ago"
-        return "Just now"
-    }
+            if (months > 0) return months + " month ago"
+            if (days > 0) return days + " day ago"
+            if (hours > 0) return hours + " hour ago"
+            if (minutes > 0) return minutes + " min ago"
+            return "Just now"
+        }
 
-    function openIssueDetail(issueId) {
-        window.location.href = `issue-detail.html?id=${issueId}`
-    }
+        function openIssueDetail(issueId) {
+            window.location.href = `issue-detail.html?id=${issueId}`
+        }
 
-    async function voteIssue(issueId) {
-        const token    = localStorage.getItem("token")
-        const response = await fetch("http://127.0.0.1:8000/vote", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ issue_id: issueId })
-        })
-        const data = await response.json()
-        alert(data.message)
+        async function voteIssue(issueId) {
+            const token = localStorage.getItem("token")
+            const response = await fetch("http://127.0.0.1:8000/vote", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ issue_id: issueId })
+            })
+            const data = await response.json()
+            alert(data.message)
+            getIssues()
+            getTopContributors()
+        }
+
+        /* ── Init ── */
         getIssues()
         getTopContributors()
-    }
 
-    /* ── Init ── */
-    getIssues()
-    getTopContributors()
+        sortSelect.addEventListener("change", () => getIssues())
+        categorySelect.addEventListener("change", () => getIssues())
 
-    sortSelect.addEventListener("change",    () => getIssues())
-    categorySelect.addEventListener("change", () => getIssues())
-
-    /* ── Nav ── */
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-        localStorage.removeItem("token")
-        window.location.href = "login.html"
-    })
-    document.getElementById("dashboardBtn").addEventListener("click",   () => window.location.href = "dashboard.html")
-    document.getElementById("reportIssueBtn").addEventListener("click", () => window.location.href = "report-issue.html")
-    document.getElementById("myProfileBtn").addEventListener("click",   () => window.location.href = "My_profile.html")
-    document.getElementById("leaderboardBtn").addEventListener("click", () => window.location.href = "leaderboard.html")
-</script>
+        /* ── Nav ── */
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+            localStorage.removeItem("token")
+            window.location.href = "login.html"
+        })
+        document.getElementById("dashboardBtn").addEventListener("click", () => window.location.href = "dashboard.html")
+        document.getElementById("reportIssueBtn").addEventListener("click", () => window.location.href = "report-issue.html")
+        document.getElementById("myProfileBtn").addEventListener("click", () => window.location.href = "My_profile.html")
+        document.getElementById("leaderboardBtn").addEventListener("click", () => window.location.href = "leaderboard.html")
+    </script>
 </body>
+
 </html>

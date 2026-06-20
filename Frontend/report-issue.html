@@ -1,187 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Report Issue</title>
 
     <style>
-
-        body{
+        body {
             font-family: Arial;
-            background-color: #f5f5f5;
+            background: #f5f5f5;
         }
 
-        .container{
+        .container {
             padding: 40px;
         }
 
-        .form-box{
-            width: 750px;
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow:0 4px 20px rgba(0,0,0,0.08);
+        .form-box {
+
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
         }
 
-        input, textarea{
+        input,
+        textarea {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
         }
 
-        button{
+        button {
             background-color: blue;
             color: white;
             border: none;
             padding: 10px 15px;
             border-radius: 5px;
         }
-        input, textarea{
-            width: 100%;
-            padding: 10px;
+
+        input,
+        textarea {
             margin-bottom: 15px;
             box-sizing: border-box;
         }
-        *{
+
+        * {
             box-sizing: border-box;
         }
 
-        .category-btn{
-            background:white;
-            color:black;
-            border:1px solid gray;
-            margin:5px;
-            cursor:pointer;
+        .category-btn {
+            padding: 10px 18px;
+            border-radius: 25px;
+            border: none;
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 6px;
+            transition: .2s;
         }
 
-        .category-btn.active{
-            background:blue;
-            color:white;
+        .category-btn:hover {
+            background: #dbeafe;
         }
 
-        .subtitle{
+        .category-btn.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .subtitle {
             color: gray;
             margin-top: -10px;
             margin-bottom: 25px;
         }
 
-        .upload-box{
-            border:2px dashed #cfd4dc;
-            border-radius:12px;
-            padding:40px;
-            text-align:center;
-            margin-bottom:20px;
-            background:#fafafa;
-            cursor:pointer;
-            transition:0.2s;
+        .upload-box {
+            border: 2px dashed #cfd4dc;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            background: #fafafa;
+            cursor: pointer;
+            transition: 0.2s;
         }
 
-        .upload-box:hover{
-            border-color:blue;
-            background:#f0f6ff;
+        .upload-box:hover {
+            border-color: blue;
+            background: #f0f6ff;
         }
 
-        label{
-            display:block;
-            margin-bottom:8px;
-            font-weight:bold;
+        label {
+            display: block;
+            margin-bottom: 12px;
+            margin-bottom: 12px;
+            font-weight: bold;
+            display: block;
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 20px;
+            margin-bottom: 8px;
         }
 
-        .upload-text{
-            color:gray;
-            margin-top:5px;
+        .upload-text {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 8px;
         }
 
-        #issueImage{
-            margin-top:15px;
+        .upload-box h3 {
+            font-size: 16px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        .upload-box img {
+            width: 55px !important;
+        }
+
+        #issueImage {
+            margin-top: 15px;
+        }
+
+        textarea {
+            min-height: 110px;
         }
 
         input,
-        textarea{
-            border:1px solid #dcdcdc;
-            border-radius:8px;
-            font-size:15px;
-            margin-bottom:25px;
+        textarea {
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 15px;
         }
 
-        #submitBtn{
-            width:100%;
-            margin-top:20px;
-            font-size:16px;
-            font-weight:bold;
+        .anonymous-box {
+            margin-top: 30px;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 15px;
+        }
+
+        #anonymousCheckbox {
+            width: 20px;
+            height: 20px;
+
+            margin: 0;
+            margin-right: 10px;
+
+            display: flex;
+            align-items: center;
+        }
+
+        .anonymous-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 20px 25px;
+
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+
+            margin-top: 20px;
+            margin-bottom: 25px;
+        }
+
+        #submitBtn {
+            width: 100%;
+            height: 55px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            background: #2563eb;
         }
 
 
-        .container{
-            display:flex;
+        .container {
+            display: flex;
         }
 
-        .sidebar{
-            position:fixed;
-            left:0;
-            top:0;
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
 
-            width:280px;
-            height:100vh;
+            width: 280px;
+            height: 100vh;
 
-            padding:20px;
-            background:#e9ecef;
+            padding: 20px;
+            background: #e9ecef;
 
-            display:flex;
-            flex-direction:column;
+            display: flex;
+            flex-direction: column;
 
-            box-sizing:border-box;
+            box-sizing: border-box;
         }
 
-        .main-content{
-            margin-left:320px;
-            padding:40px;
+        .main-content {
+            margin-left: 280px;
+
+
+            padding: 15px 30px 30px;
+
+            width: calc(100vw - 320px);
+
+            box-sizing: border-box;
         }
+
+        .form-box {
+            width: 100%;
+            max-width: none;
+
+            background: white;
+
+            padding: 35px 45px;
+
+            border-radius: 20px;
+
+            box-shadow: 0 2px 15px rgba(0, 0, 0, .08);
+        }
+
 
         .logo{
             color:#0d6efd;
             margin-bottom:40px;
-        }
-
-        .menu-item{
-            padding:12px;
-            margin-bottom:10px;
-            border-radius:8px;
-            cursor:pointer;
-        }
-
-        .menu-item:hover{
-            background:#dbeafe;
-            transform:translateX(4px);
-            transition:0.2s;
-        }
-
-        .active{
-            background:#dbeafe;
-            color:#0d6efd;
+            font-size:22px;
             font-weight:700;
         }
 
-        .logout-section{
-            margin-top:auto;
-            padding-top:20px;
-            border-top:1px solid #d1d5db;
+        .menu-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
         }
 
-        .logout{
-            background:#fee2e2;
-            color:#dc2626;
-            border:1px solid #fecaca;
-            font-weight:600;
-            text-align:center;
+        .menu-item:hover {
+            background: #dbeafe;
+            transform: translateX(4px);
+            transition: 0.2s;
         }
 
-        .logout:hover{
-            background:#fecaca;
+        .active {
+            background: #dbeafe;
+            color: #0d6efd;
+            font-weight: 700;
         }
 
+        .logout-section {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #d1d5db;
+        }
+
+        .logout {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .logout:hover {
+            background: #fecaca;
+        }
     </style>
 
 </head>
+
 <body>
 
     <div class="container">
@@ -192,47 +281,29 @@
                 CampusCoord
             </h2>
 
-            <div
-                class="menu-item"
-                id="dashboardBtn"
-            >
+            <div class="menu-item" id="dashboardBtn">
                 Dashboard
             </div>
 
-            <div
-                class="menu-item active"
-                id="reportIssueBtn"
-            >
+            <div class="menu-item active" id="reportIssueBtn">
                 Report Issue
             </div>
 
-            <div
-                class="menu-item"
-                id="myProfileBtn"
-            >
+            <div class="menu-item" id="myProfileBtn">
                 My Profile
             </div>
 
-            <div
-                class="menu-item"
-                id="leaderboardBtn"
-            >
+            <div class="menu-item" id="leaderboardBtn">
                 Leaderboard
             </div>
 
-            <div
-                class="menu-item"
-                id="resolvedBtn"
-            >
+            <div class="menu-item" id="resolvedBtn">
                 Resolved
             </div>
 
             <div class="logout-section">
 
-                <div
-                    class="menu-item logout"
-                    id="logoutBtn"
-                >
+                <div class="menu-item logout" id="logoutBtn">
                     Logout
                 </div>
 
@@ -244,29 +315,23 @@
 
             <div class="form-box">
 
-            <h1>Report Issue</h1>
+                <h1>Report Issue</h1>
 
-            <p class="subtitle">
-            Help improve the campus by reporting issues with proper details.
-            </p>
+                <p class="subtitle">
+                    Help improve the campus by reporting issues with proper details.
+                </p>
 
-            
 
-            <label>Issue Title</label>
 
-            <input
-                id="title"
-                placeholder="e.g. Broken Classroom Fan"
-            />
+                <label>Issue Title</label>
 
-            <label>Description</label>
+                <input id="title" placeholder="e.g. Broken Classroom Fan" />
 
-            <textarea
-                id="description"
-                placeholder="Describe the issue in detail"
-            ></textarea>
+                <label>Description</label>
 
-            <label>Issue Category</label>
+                <textarea id="description" placeholder="Describe the issue in detail"></textarea>
+
+                <label>Issue Category</label>
 
                 <div id="categoryContainer">
 
@@ -304,55 +369,41 @@
 
                 </div>
 
-                <input
-                    id="otherCategory"
-                    placeholder="Enter custom category"
-                    style="
+                <input id="otherCategory" placeholder="Enter custom category" style="
                         display:none;
                         margin-top:15px;
-                    "
-                >
+                    ">
 
-            <label>Location</label>
-            
-            
-            <input
-                id="location"
-                placeholder="e.g. Classroom 204"
-            />
+                <label>Location</label>
 
-            <label>Issue Image</label>
 
-            <label for="issueImage" class="upload-box">
+                <input id="location" placeholder="e.g. Classroom 204" />
 
-                <img
-                    src="images/Upload file.png"
-                    style="
+                <label>Issue Image</label>
+
+                <label for="issueImage" class="upload-box">
+
+                    <img src="images/Upload file.png" style="
                         width:70px;
-                    "
-                >
+                    ">
 
-                <h3>Upload Issue Image</h3>
+                    <h3>Upload Issue Image</h3>
 
-                <p class="upload-text">
-                    Click anywhere to select image
-                </p>
+                    <p class="upload-text">
+                        Click anywhere to select image
+                    </p>
 
-                <p class="upload-text">
-                    JPG, PNG supported
-                </p>
+                    <p class="upload-text">
+                        JPG, PNG supported
+                    </p>
 
-            </label>
+                </label>
 
-            <p id="selectedFileName"></p>
+                <p id="selectedFileName"></p>
 
-            <input
-                type="file"
-                id="issueImage"
-                hidden
-            >
+                <input type="file" id="issueImage" hidden>
 
-            <div style="
+                <div style="
                 display:flex;
                 justify-content:space-between;
                 align-items:center;
@@ -363,27 +414,23 @@
                 border-radius:10px;
                 ">
 
-                <div>
-                    <strong>Report Anonymously</strong>
-                    <br>
-                    <small>
-                        Other users cannot see your name.
-                    </small>
+                    <div>
+                        <strong>Report Anonymously</strong>
+                        <br>
+                        <small>
+                            Other users cannot see your name.
+                        </small>
+                    </div>
+
+                    <input type="checkbox" id="anonymousCheckbox">
                 </div>
 
-                <input
-                    type="checkbox"
-                    id="anonymousCheckbox"
-                    style="width:20px;height:20px;"
-                >
+                <button id="submitBtn">
+                    Submit Report
+                </button>
+
             </div>
 
-            <button id="submitBtn">
-                Submit Report
-            </button>
-
-        </div>
-        
         </div>
 
     </div>
@@ -392,56 +439,56 @@
         const token = localStorage.getItem("token")
 
         document
-        .getElementById("issueImage")
-        .addEventListener(
-            "change",
+            .getElementById("issueImage")
+            .addEventListener(
+                "change",
 
-            function(){
+                function () {
 
-                if(this.files[0]){
+                    if (this.files[0]) {
 
-                    document.getElementById(
-                        "selectedFileName"
-                    ).innerText =
-                    this.files[0].name
+                        document.getElementById(
+                            "selectedFileName"
+                        ).innerText =
+                            this.files[0].name
+                    }
+
                 }
-
-            }
-        )
+            )
 
         let selectedCategory = ""
 
         const otherCategoryInput =
-        document.getElementById("otherCategory")
+            document.getElementById("otherCategory")
 
         const categoryButtons =
-        document.querySelectorAll(".category-btn")
+            document.querySelectorAll(".category-btn")
 
-        categoryButtons.forEach(function(btn){
+        categoryButtons.forEach(function (btn) {
 
             btn.addEventListener(
                 "click",
 
-                function(){
+                function () {
 
-                    categoryButtons.forEach(function(b){
+                    categoryButtons.forEach(function (b) {
                         b.classList.remove("active")
                     })
 
                     btn.classList.add("active")
 
                     selectedCategory =
-                    btn.innerText
+                        btn.innerText
 
-                    if(selectedCategory === "Other"){
+                    if (selectedCategory === "Other") {
 
                         otherCategoryInput.style.display =
-                        "block"
+                            "block"
                     }
-                    else{
+                    else {
 
                         otherCategoryInput.style.display =
-                        "none"
+                            "none"
 
                         otherCategoryInput.value = ""
                     }
@@ -449,66 +496,66 @@
             )
         })
 
-        if(!token){
+        if (!token) {
             window.location.href = "login.html"
         }
 
         submitBtn.addEventListener(
             "click",
 
-            async function(){
+            async function () {
 
                 const title =
-                document.getElementById("title").value
+                    document.getElementById("title").value
 
                 const description =
-                document.getElementById("description").value
+                    document.getElementById("description").value
 
                 const isAnonymous =
-                document.getElementById(
-                    "anonymousCheckbox"
-                ).checked
+                    document.getElementById(
+                        "anonymousCheckbox"
+                    ).checked
 
                 let category =
-                selectedCategory
+                    selectedCategory
 
-                if(category === "Other"){
+                if (category === "Other") {
 
                     category =
-                    otherCategoryInput.value.trim()
+                        otherCategoryInput.value.trim()
                 }
 
                 const location =
-                document.getElementById("location").value
+                    document.getElementById("location").value
 
-                if(title.trim() === ""){
+                if (title.trim() === "") {
                     alert("Enter issue title")
                     return
                 }
 
-                if(description.trim() === ""){
+                if (description.trim() === "") {
                     alert("Enter description")
                     return
                 }
 
-                if(category.trim() === ""){
+                if (category.trim() === "") {
                     alert("Select category")
                     return
                 }
 
-                if(location.trim() === ""){
+                if (location.trim() === "") {
                     alert("Enter location")
                     return
                 }
 
-                if(category === ""){
+                if (category === "") {
                     alert("Select category")
                     return
                 }
 
                 const imageFile =
-                document.getElementById("issueImage").files[0]
-                
+                    document.getElementById("issueImage").files[0]
+
                 const token = localStorage.getItem("token")
                 console.log(token)
 
@@ -517,7 +564,7 @@
 
                 let imageUrl = null
 
-                if(imageFile){
+                if (imageFile) {
 
                     const formData = new FormData()
 
@@ -527,21 +574,21 @@
                     )
 
                     const uploadResponse =
-                    await fetch(
-                        "http://127.0.0.1:8000/upload",
-                        {
-                            method: "POST",
-                            body: formData
-                        }
-                    )
+                        await fetch(
+                            "http://127.0.0.1:8000/upload",
+                            {
+                                method: "POST",
+                                body: formData
+                            }
+                        )
 
                     const uploadData =
-                    await uploadResponse.json()
+                        await uploadResponse.json()
 
                     console.log(uploadData)
 
                     imageUrl =
-                    uploadData.image_url
+                        uploadData.image_url
                 }
 
                 const response = await fetch(
@@ -551,7 +598,7 @@
 
                         headers: {
                             "Content-Type": "application/json",
-                                Authorization: `Bearer ${token}`
+                            Authorization: `Bearer ${token}`
                         },
 
                         body: JSON.stringify({
@@ -566,7 +613,7 @@
                 )
                 const data = await response.json()
 
-                if(!response.ok){
+                if (!response.ok) {
 
                     alert("Issue submission failed")
 
@@ -581,15 +628,15 @@
 
                 alert("Issue reported successfully!")
 
-                setTimeout(function(){
+                setTimeout(function () {
 
                     window.location.replace(
                         "dashboard.html"
                     )
 
-                },300)
+                }, 300)
 
-                
+
                 submitBtn.innerText = "Submit"
 
                 document.getElementById("title").value = ""
@@ -601,74 +648,75 @@
 
                 window.location.href = "dashboard.html"
                 console.log(data)
-                
+
             }
         )
 
-            const logoutBtn =
+        const logoutBtn =
             document.getElementById("logoutBtn")
 
-            logoutBtn.addEventListener(
-                "click",
-                function(){
+        logoutBtn.addEventListener(
+            "click",
+            function () {
 
-                    localStorage.removeItem("token")
+                localStorage.removeItem("token")
 
-                    window.location.href =
+                window.location.href =
                     "login.html"
-                }
-            )
+            }
+        )
 
-            const myProfileBtn =
+        const myProfileBtn =
             document.getElementById("myProfileBtn")
 
-            myProfileBtn.addEventListener(
-                "click",
-                function(){
+        myProfileBtn.addEventListener(
+            "click",
+            function () {
 
-                    window.location.href =
+                window.location.href =
                     "My_profile.html"
-                }
-            )
+            }
+        )
 
-            const leaderboardBtn =
+        const leaderboardBtn =
             document.getElementById("leaderboardBtn")
 
-            leaderboardBtn.addEventListener(
-                "click",
-                function(){
+        leaderboardBtn.addEventListener(
+            "click",
+            function () {
 
-                    window.location.href =
+                window.location.href =
                     "leaderboard.html"
-                }
-            )
+            }
+        )
 
-            const resolvedBtn =
+        const resolvedBtn =
             document.getElementById("resolvedBtn")
 
-            resolvedBtn.addEventListener(
-                "click",
-                function(){
+        resolvedBtn.addEventListener(
+            "click",
+            function () {
 
-                    window.location.href =
+                window.location.href =
                     "resolved.html"
-                }
-            )
+            }
+        )
 
-            const dashboardBtn =
+        const dashboardBtn =
             document.getElementById("dashboardBtn")
 
-            dashboardBtn.addEventListener(
-                "click",
-                function(){
+        dashboardBtn.addEventListener(
+            "click",
+            function () {
 
-                    window.location.href =
+                window.location.href =
                     "dashboard.html"
-                }
-            )
+            }
+        )
 
 
     </script>
 
 </body>
+
 </html>

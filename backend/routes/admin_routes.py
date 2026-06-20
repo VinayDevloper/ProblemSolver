@@ -88,11 +88,15 @@ def unban_user(user_id: int, admin=Depends(require_admin)):
 def get_issue_reports(admin=Depends(require_admin)):
     with engine.connect() as conn:
         result = conn.execute(text("""
-            SELECT 
+            SELECT
                 issue_reports.*,
-                issues.title as issue_title
+                issues.title as issue_title,
+                users.name as reporter_name
             FROM issue_reports
-            LEFT JOIN issues ON issue_reports.issue_id = issues.id
+            LEFT JOIN issues
+                ON issue_reports.issue_id = issues.id
+            LEFT JOIN users
+                ON issue_reports.reported_by = users.id
             ORDER BY issue_reports.id DESC
         """))
         rows = result.mappings().all()
@@ -104,13 +108,19 @@ def get_issue_reports(admin=Depends(require_admin)):
 def get_comment_reports(admin=Depends(require_admin)):
     with engine.connect() as conn:
         result = conn.execute(text("""
-            SELECT 
+            SELECT
                 comment_reports.*,
-                comments.comment as comment_text
+                comments.comment AS comment_text,
+                comments.issue_id,
+                users.name AS reporter_name
             FROM comment_reports
-            LEFT JOIN comments ON comment_reports.comment_id = comments.id
+            LEFT JOIN comments
+                ON comment_reports.comment_id = comments.id
+            LEFT JOIN users
+                ON comment_reports.reported_by = users.id
             ORDER BY comment_reports.id DESC
         """))
+
         rows = result.mappings().all()
         return [dict(r) for r in rows]
 

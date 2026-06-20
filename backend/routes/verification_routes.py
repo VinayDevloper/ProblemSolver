@@ -94,9 +94,6 @@ def verify_issue(
                 }
             )
 
-    
-
-        
 
         verification_result = connection.execute(
             text("""

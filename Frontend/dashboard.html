@@ -1,36 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        .container{
+        .container {
             display: flex;
         }
-        .sidebar{
-            position:fixed;
-            left:0;
-            top:0;
 
-            width:280px;
-            height:100vh;
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
 
-            padding:20px;
-            background:#e9ecef;
+            box-sizing: border-box;
+            width: 280px;
+            height: 100vh;
 
-            display:flex;
-            flex-direction:column;
+            padding: 20px;
+            background: #e9ecef;
+
+            display: flex;
+            flex-direction: column;
         }
-        .filters{
-            display:flex;
-            gap:12px;
-            margin-left:auto;
+
+        .filters {
+            display: flex;
+            gap: 12px;
+            margin-left: auto;
         }
 
         /* FIX 3: Unified dropdown style for both selects */
         #categorySelect,
-        #sortSelect{
+        #sortSelect {
             padding: 10px 35px 10px 15px;
             border: 1px solid #d1d5db;
             border-radius: 10px;
@@ -49,178 +53,212 @@
         }
 
         #categorySelect:hover,
-        #sortSelect:hover{
+        #sortSelect:hover {
             border-color: blue;
         }
 
-        .category-badge{
-            background:#dbeafe;
-            color:#2563eb;
+        .category-badge {
+            background: #dbeafe;
+            color: #2563eb;
 
-            padding:6px 12px;
-            border-radius:20px;
+            padding: 6px 12px;
+            border-radius: 20px;
 
-            font-size:13px;
-            font-weight:600;
+            font-size: 13px;
+            font-weight: 600;
         }
 
-        .status-open{
-            background:#dcfce7;
-            color:#166534;
+        .status-open {
+            background: #dcfce7;
+            color: #166534;
         }
 
-        .status-progress{
-            background:#fef3c7;
-            color:#92400e;
+        .status-progress {
+            background: #fef3c7;
+            color: #92400e;
         }
 
-        .status-resolved{
-            background:#dbeafe;
-            color:#1d4ed8;
+        .status-resolved {
+            background: #dbeafe;
+            color: #1d4ed8;
         }
 
-        .logo{
-            margin-bottom:40px;
-            color:#0d6efd;
+        .verification-banner {
+            width: 100%;
+            box-sizing: border-box;
+
+            background: #f5f9ff;
+            border: 1px solid #dbeafe;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 22px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .menu-item{
-            padding:12px;
-            margin-bottom:10px;
-            border-radius:8px;
-            cursor:pointer;
-            font-weight:500;
+
+        .verification-left {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+
+            color: #64748b;
+
+            font-size: 17px;
         }
 
-        .issue-header{
-            display:flex;
-            justify-content:space-between;
-            align-items:flex-start;
+        .verification-view {
+            color: #2563eb;
 
-            margin-bottom:15px;
+            font-weight: 700;
+
+            cursor: pointer;
         }
 
-        .menu-item:hover{
-            background:#dbeafe;
-            transform:translateX(4px);
-            transition:0.2s;
+        .verification-view:hover {
+            text-decoration: underline;
         }
 
-        .active{
-            background:#dbeafe;
-            color:#0d6efd;
-
-            font-weight:700;
-            box-shadow:none;
+        .logo {
+            color: #0d6efd;
+            margin-bottom: 40px;
+            font-size: 22px;
+            font-weight: 700;
         }
 
-        
-        .logout{
-            background:#fee2e2;
-            color:#dc2626;
-            border:1px solid #fecaca;
-            font-weight:600;
-
-            text-align:center;
-            padding-left:12px;
+        .menu-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #374151;
         }
 
-        .logout:hover{
-            background:#fecaca;
-            
+        .issue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+
+            margin-bottom: 15px;
+        }
+
+        .menu-item:hover {
+            background: #dbeafe;
+            transform: translateX(4px);
+            transition: 0.2s;
+        }
+
+        .active {
+            background: #dbeafe;
+            color: #0d6efd;
+
+            font-weight: 700;
+        }
+
+
+        .logout {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .logout:hover {
+            background: #fecaca;
+
         }
 
         /* FIX 1: rightSidebar width matches contributor/trending cards */
-        #rightSidebar{
-            width:280px;
-            flex-shrink:0;
-            position:sticky;
-            top:20px;
-            align-self:flex-start;
+        #rightSidebar {
+            width: 280px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 20px;
+            align-self: flex-start;
         }
 
-        .logout-section{
-            margin-top:auto;
-            padding-top:20px;
-            border-top:1px solid #d1d5db;
+        .logout-section {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #d1d5db;
         }
 
-        .main-content{
-            margin-left:320px;
-            padding: 30px;
-        }   
+        .main-content {
+            margin-left: 320px;
+            padding: 40px;
+        }
 
-        .content-wrapper{
-            display:flex;
-            gap:25px;
-            align-items:flex-start;
-            width:100%;
+        .content-wrapper {
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+            width: 100%;
         }
 
         /* FIX 1: contributorsBox and trendingCategoriesBox both fill sidebar width */
         #contributorsBox,
-        #trendingCategoriesBox{
-            width:100%;
-            box-sizing:border-box;
+        #trendingCategoriesBox {
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        #issues-container{
-            flex:1;
-            min-width:0;
+        #issues-container {
+            flex: 1;
+            min-width: 0;
         }
 
-        .contributor-card{
-            background:white;
-            border-radius:12px;
-            padding:20px;
-            box-shadow:0 2px 12px rgba(0,0,0,0.08);
-            box-sizing:border-box;
-            width:100%;
+        .contributor-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            box-sizing: border-box;
+            width: 100%;
         }
 
-        .contributor-item{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:15px;
+        .contributor-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
         }
 
-        .avatar{
-            width:40px;
-            height:40px;
-            border-radius:50%;
-            background:#dbeafe;
-            color:#2563eb;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            font-weight:bold;
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #dbeafe;
+            color: #2563eb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
         }
 
-        body{
+        body {
             margin: 0;
-            font-family: Arial;
+            font-family: Arial, sans-serif;
             background-color: #f5f5f5;
         }
-        .issue-card{
-            /* width:100%; */
-            max-width:none;
-            box-sizing:border-box;
-            width:800px;
-            flex:1;
 
-            padding:25px;
+        .issue-card {
+            width: 100%;
+            flex: 1;
+            box-sizing: border-box;
 
-            background:white;
-            border:none;
+            padding: 25px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 
-            border-radius:14px;
-
-            box-shadow:0 2px 12px rgba(0,0,0,0.08);
-
-            margin-bottom:25px;
+            margin-bottom: 25px;
         }
-        button{
+
+        button {
             background-color: blue;
             color: white;
             border: none;
@@ -229,296 +267,423 @@
             cursor: pointer;
         }
 
-        .top-bar{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
 
-            width:100%;
+            width: 100%;
 
-            margin-bottom:25px;
+            margin-bottom: 25px;
         }
 
-        .logout-section{
-            margin-top:auto;
-            padding-bottom:20px;
-        }
+        .status-badge {
+            display: inline-block;
 
-        .status-badge{
-            display:inline-block;
+            padding: 6px 12px;
 
-            padding:6px 12px;
+            border-radius: 20px;
 
-            border-radius:20px;
+            font-size: 14px;
+            font-weight: 600;
 
-            font-size:14px;
-            font-weight:600;
-
-            white-space:nowrap;
+            white-space: nowrap;
         }
 
         /* FIX 2: Empty state styling */
-        .empty-state{
-            width:800px;   /* same as issue-card */
-            box-sizing:border-box;
+        .empty-state {
+            width: 100%;
+            box-sizing: border-box;
 
-            text-align:center;
-            padding:60px 20px;
-            background:white;
-            border-radius:14px;
-            box-shadow:0 2px 12px rgba(0,0,0,0.08);
-            color:#6b7280;
-        }
-        .issue-card,
-        .empty-state{
-            width:800px;
-            box-sizing:border-box;
-        }
-        .empty-state .empty-icon{
-            font-size:48px;
-            margin-bottom:16px;
-        }
-        .empty-state h3{
-            margin:0 0 8px;
-            color:#374151;
-            font-size:18px;
-        }
-        .empty-state p{
-            margin:0;
-            font-size:14px;
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
         }
 
+        .issue-card {
+            width: 800px;
+            box-sizing: border-box;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            margin: 0 0 8px;
+            color: #374151;
+            font-size: 18px;
+        }
+
+        .empty-state p {
+            margin: 0;
+            font-size: 14px;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="sidebar">
 
-        <h2 class="logo">
-            CampusCoord
-        </h2>
+            <h2 class="logo">
+                CampusCoord
+            </h2>
 
-        <div class="menu-item active">
-            Dashboard
+            <div class="menu-item active">
+                Dashboard
+            </div>
+
+            <div class="menu-item" id="reportIssueBtn">
+                Report Issue
+            </div>
+
+            <div class="menu-item" id="myProfileBtn">
+                My Profile
+            </div>
+
+            <div class="menu-item" id="leaderboardBtn">
+                Leaderboard
+            </div>
+
+            <div class="menu-item" id="resolvedBtn">
+                Resolved
+            </div>
+
+            <div class="logout-section">
+
+                <div class="menu-item logout" id="logoutBtn">
+                    Logout
+                </div>
+
+            </div>
+
         </div>
-
-        <div
-            class="menu-item"
-            id="reportIssueBtn"
-        >
-            Report Issue
-        </div>
-
-        <div
-            class="menu-item"
-            id="myProfileBtn"
-        >
-            My Profile
-        </div>
-
-        <div
-            class="menu-item"
-            id="leaderboardBtn"
-        >
-            Leaderboard
-        </div>
-
-        <div
-            class="menu-item"
-            id="resolvedBtn"
-        >
-            Resolved
-        </div>
-
-        <div class="logout-section">
-
-    <div
-        class="menu-item logout"
-        id="logoutBtn"
-    >
-        Logout
-    </div>
-
-</div>
-
-    </div>
         <div class="main-content">
 
-            
-            <div class="top-bar">
 
-                
-                <h1
-                style="
+            <div class="top-bar">
+                <h1 style="
                 margin:0;
                 white-space:nowrap;
-                "
-                >
-                Active Issues
+                ">
+                    Active Issues
                 </h1>
-                
+
                 <div class="filters">
 
-    <select id="sortSelect">
+                    <select id="sortSelect">
 
-        <option value="newest">
-            Newest
-        </option>
+                        <option value="newest">
+                            Newest
+                        </option>
 
-        <option value="oldest">
-            Oldest
-        </option>
+                        <option value="oldest">
+                            Oldest
+                        </option>
 
-        <option value="trending">
-            Trending
-        </option>
+                        <option value="trending">
+                            Trending
+                        </option>
 
-    </select>
+                    </select>
 
-    <select id="categorySelect">
+                    <select id="categorySelect">
 
-            <option value="">
-                All Categories
-            </option>
+                        <option value="">
+                            All Categories
+                        </option>
 
-            <option value="Infrastructure">
-                Infrastructure
-            </option>
+                        <option value="Infrastructure">
+                            Infrastructure
+                        </option>
 
-            <option value="Electrical">
-                Electrical
-            </option>
+                        <option value="Electrical">
+                            Electrical
+                        </option>
 
-            <option value="Water">
-                Water
-            </option>
+                        <option value="Water">
+                            Water
+                        </option>
 
-            <option value="Cleanliness">
-                Cleanliness
-            </option>
+                        <option value="Cleanliness">
+                            Cleanliness
+                        </option>
 
-            <option value="Hostel">
-                Hostel
-            </option>
+                        <option value="Hostel">
+                            Hostel
+                        </option>
 
-            <option value="Mess">
-                Mess
-            </option>
+                        <option value="Mess">
+                            Mess
+                        </option>
 
-            <option value="WiFi">
-                WiFi
-            </option>
+                        <option value="WiFi">
+                            WiFi
+                        </option>
 
-            <option value="Academics">
-                Academics
-            </option>
+                        <option value="Academics">
+                            Academics
+                        </option>
 
-            <option value="Placements">
-                Placements
-            </option>
+                        <option value="Placements">
+                            Placements
+                        </option>
 
-            <option value="Exam Department">
-                Exam Department
-            </option>
+                        <option value="Exam Department">
+                            Exam Department
+                        </option>
 
-            <option value="Environment">
-                Environment
-            </option>
+                        <option value="Environment">
+                            Environment
+                        </option>
 
-            <option value="Animal">
-                Animal
-            </option>
+                        <option value="Animal">
+                            Animal
+                        </option>
 
-            <option value="Events">
-                Events
-            </option>
+                        <option value="Events">
+                            Events
+                        </option>
 
-            <option value="Emergency Help">
-                Emergency Help
-            </option>
+                        <option value="Emergency Help">
+                            Emergency Help
+                        </option>
 
-            <option value="Safety">
-                Safety
-            </option>
+                        <option value="Safety">
+                            Safety
+                        </option>
 
-        </select>
+                    </select>
 
+                </div>
+
+            </div>
+
+
+            <div class="verification-banner" id="verificationBanner">
+
+                <div class="verification-left" id="verificationNormalState">
+                    🔍
+                    <span id="verificationText">Loading...</span>
+                </div>
+
+                <div class="verification-left" id="verificationActiveState"
+                    style="display:none; flex-direction:column; align-items:flex-start; gap:4px;">
+                    <span style="color:#2563eb; font-weight:700;">🔎 Verification Mode Active</span>
+                    <span id="verificationActiveText">Showing 0 issues awaiting community verification</span>
+                </div>
+
+                <div class="verification-view" onclick="toggleVerificationView()" id="verificationBtn">
+                    Show All →
+                </div>
+
+                <div class="verification-view" onclick="toggleVerificationView()" id="verificationBackBtn"
+                    style="display:none;">
+                    ← Back to Dashboard
+                </div>
+
+            </div>
+
+
+            <div class="content-wrapper">
+
+                <div id="issues-container">
+                </div>
+
+                <div id="rightSidebar">
+
+                    <div id="trendingCategoriesBox"></div>
+
+                    <br>
+
+                    <div id="contributorsBox"></div>
+
+                </div>
+
+            </div>
         </div>
 
-        </div>
+        <script>
 
-        <div class="content-wrapper">
-        
-        <div id="issues-container">        
-        </div>
+            const params = new URLSearchParams(window.location.search)
+            const issueId = params.get("id")
 
-        <div id="rightSidebar">
+            let showVerificationOnly = false
 
-            <div id="trendingCategoriesBox"></div>
+            if (params.get("verification") === "true") {
+                showVerificationOnly = true
+            }
+            async function loadVerificationBanner() {
+                const token = localStorage.getItem("token")
+                const response = await fetch("http://127.0.0.1:8000/pending-verification", {
+                    headers: { Authorization: `Bearer ${token}` }
+                })
+                const data = await response.json()
+                window.pendingCount = data.length
 
-            <br>
-
-            <div id="contributorsBox"></div>
-
-        </div>
-        
-        </div>
-    </div>
-
-    <script>
-        const token = localStorage.getItem("token")
-
-        if(!token){
-            window.location.href = "login.html"
-        }
-        const issuesContainer =
-        document.getElementById("issues-container")
-
-        const sortSelect =
-        document.getElementById("sortSelect")
-
-        const categorySelect =
-        document.getElementById("categorySelect")
-
-        async function getIssues(){
-            const response = await fetch(
-                `http://127.0.0.1:8000/issues?sort=${sortSelect.value}`
-            )
-            const data = await response.json()
-            issuesContainer.innerHTML = ""
-            let foundIssue = false
-
-            for(let issue of data)
-            {
-
-                if(
-                    categorySelect.value !== "" &&
-                    issue.category !== categorySelect.value
-                ){
-                    continue
-                }
-                console.log(issue.id, issue.title, issue.status)
-
-                let statusText = issue.status
-                let statusClass = "status-open"
-
-                if(issue.status === "in_progress"){
-                    statusText = "In Progress"
-                    statusClass = "status-progress"
-                }
-
-                if(issue.status === "resolved"){
-                    statusText = "Resolved"
-                    statusClass = "status-resolved"
-                }
-
-                if(issue.status === "open"){
-                    statusText = "Open"
-                    statusClass = "status-open"
+                if (data.length === 0 && !showVerificationOnly) {
+                    document.getElementById("verificationBanner").style.display = "none"
+                    return
                 }
 
-                foundIssue = true
-                issuesContainer.innerHTML += `
+                document.getElementById("verificationBanner").style.display = "flex"
+                updateBannerUI()
+                if (showVerificationOnly) {
+                    updateBannerUI()
+                }
+            }
+
+            function updateBannerUI() {
+                if (showVerificationOnly && window.pendingCount === 0) {
+
+                    showVerificationOnly = false
+
+                    document.getElementById("verificationBanner").style.display = "none"
+
+                    window.history.replaceState({}, "", "dashboard.html")
+
+                    getIssues()
+
+                    return
+                }
+                const normalState = document.getElementById("verificationNormalState")
+                const activeState = document.getElementById("verificationActiveState")
+                const showAllBtn = document.getElementById("verificationBtn")
+                const backBtn = document.getElementById("verificationBackBtn")
+
+                if (showVerificationOnly) {
+                    normalState.style.display = "none"
+                    showAllBtn.style.display = "none"
+                    activeState.style.display = "flex"
+                    backBtn.style.display = "block"
+                    document.getElementById("verificationActiveText").innerText =
+                        `Showing ${window.pendingCount} issues awaiting community verification`
+                }
+                else {
+                    activeState.style.display = "none"
+                    backBtn.style.display = "none"
+                    normalState.style.display = "flex"
+                    showAllBtn.style.display = "block"
+                    document.getElementById("verificationText").innerText =
+                        `${window.pendingCount} issues are awaiting community verification`
+                }
+            }
+
+
+
+            const token = localStorage.getItem("token")
+
+            if (!token) {
+                window.location.href = "login.html"
+            }
+            const issuesContainer =
+                document.getElementById("issues-container")
+
+            const sortSelect =
+                document.getElementById("sortSelect")
+
+            const categorySelect =
+                document.getElementById("categorySelect")
+
+            function toggleVerificationView() {
+                showVerificationOnly = !showVerificationOnly
+
+                if (!showVerificationOnly) {
+                    window.history.replaceState({}, "", "dashboard.html")
+                }
+
+                updateBannerUI()
+                getIssues()
+            }
+
+
+            async function getIssues() {
+                let data
+
+                if (showVerificationOnly) {
+
+                    const token = localStorage.getItem("token")
+
+                    const pendingResponse =
+                        await fetch(
+                            "http://127.0.0.1:8000/pending-verification",
+                            {
+                                headers: {
+                                    Authorization: `Bearer ${token}`
+                                }
+                            }
+                        )
+
+                    const pendingData =
+                        await pendingResponse.json()
+
+                    const response =
+                        await fetch(
+                            `http://127.0.0.1:8000/issues?sort=${sortSelect.value}`
+                        )
+
+                    const allIssues =
+                        await response.json()
+
+                    const pendingIds =
+                        pendingData.map(
+                            item => item.id
+                        )
+
+                    data =
+                        allIssues.filter(
+                            issue => pendingIds.includes(issue.id)
+                        )
+
+                }
+                else {
+
+                    const response =
+                        await fetch(
+                            `http://127.0.0.1:8000/issues?sort=${sortSelect.value}`
+                        )
+
+                    data =
+                        await response.json()
+
+                }
+                issuesContainer.innerHTML = ""
+                let foundIssue = false
+
+                for (let issue of data) {
+
+                    if (
+                        categorySelect.value !== "" &&
+                        issue.category !== categorySelect.value
+                    ) {
+                        continue
+                    }
+                    console.log(issue.id, issue.title, issue.status)
+
+                    let statusText = issue.status
+                    let statusClass = "status-open"
+
+                    if (issue.status === "in_progress") {
+                        statusText = "In Progress"
+                        statusClass = "status-progress"
+                    }
+
+                    if (issue.status === "resolved") {
+                        statusText = "Resolved"
+                        statusClass = "status-resolved"
+                    }
+
+                    if (issue.status === "open") {
+                        statusText = "Open"
+                        statusClass = "status-open"
+                    }
+
+                    foundIssue = true
+                    issuesContainer.innerHTML += `
                 <div class="issue-card">
 
                         <div class="issue-header">
@@ -614,82 +779,82 @@
                     </div>
                     
                     `
-            }
+                }
 
-            // FIX 2: Show empty state if no issues found for selected category
-            if(!foundIssue){
-                const categoryLabel = categorySelect.value || "this filter"
-                issuesContainer.innerHTML = `
+                // FIX 2: Show empty state if no issues found for selected category
+                if (!foundIssue) {
+                    const categoryLabel = categorySelect.value || "this filter"
+                    issuesContainer.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-icon">📭</div>
                     <h3>No issues found</h3>
                     <p>There are no active issues under <b>${categoryLabel}</b> right now.</p>
                 </div>
                 `
+                }
+
             }
-            
-        }
 
-        function getTimeAgo(dateString){
+            function getTimeAgo(dateString) {
 
-        const now = new Date()
+                const now = new Date()
 
-        const created = new Date(dateString)
+                const created = new Date(dateString)
 
-        const seconds =
-        Math.floor(
-            (now - created) / 1000
-        )
+                const seconds =
+                    Math.floor(
+                        (now - created) / 1000
+                    )
 
-        const minutes =
-        Math.floor(seconds / 60)
+                const minutes =
+                    Math.floor(seconds / 60)
 
-        const hours =
-        Math.floor(minutes / 60)
+                const hours =
+                    Math.floor(minutes / 60)
 
-        const days =
-        Math.floor(hours / 24)
+                const days =
+                    Math.floor(hours / 24)
 
-        const months =
-        Math.floor(days / 30)
+                const months =
+                    Math.floor(days / 30)
 
-        if(months > 0){
-            return months + " month ago"
-        }
+                if (months > 0) {
+                    return months + " month ago"
+                }
 
-        if(days > 0){
-            return days + " day ago"
-        }
+                if (days > 0) {
+                    return days + " day ago"
+                }
 
-        if(hours > 0){
-            return hours + " hour ago"
-        }
+                if (hours > 0) {
+                    return hours + " hour ago"
+                }
 
-        if(minutes > 0){
-            return minutes + " min ago"
-        }
+                if (minutes > 0) {
+                    return minutes + " min ago"
+                }
 
-        return "Just now"
-    }
+                return "Just now"
+            }
 
 
 
-    async function getTrendingCategories(){
+            async function getTrendingCategories() {
 
-            const response =
-            await fetch(
-                "http://127.0.0.1:8000/trending-categories"
-            )
+                const response =
+                    await fetch(
+                        "http://127.0.0.1:8000/trending-categories"
+                    )
 
-            const data =
-            await response.json()
+                const data =
+                    await response.json()
 
-            const box =
-            document.getElementById(
-                "trendingCategoriesBox"
-            )
+                const box =
+                    document.getElementById(
+                        "trendingCategoriesBox"
+                    )
 
-            box.innerHTML = `
+                box.innerHTML = `
 
                 <div class="contributor-card">
 
@@ -697,8 +862,7 @@
                         Trending Categories
                     </h3>
 
-                    ${
-                        data.map(category => `
+                    ${data.map(category => `
 
                         <div
                             style="
@@ -730,24 +894,24 @@
 
                 </div>
             `
-        }
+            }
 
-    async function getTopContributors(){
+            async function getTopContributors() {
 
-        const response =
-        await fetch(
-            "http://127.0.0.1:8000/top-contributors"
-        )
+                const response =
+                    await fetch(
+                        "http://127.0.0.1:8000/top-contributors"
+                    )
 
-        const data =
-        await response.json()
+                const data =
+                    await response.json()
 
-        const box =
-        document.getElementById(
-            "contributorsBox"
-        )
+                const box =
+                    document.getElementById(
+                        "contributorsBox"
+                    )
 
-        box.innerHTML = `
+                box.innerHTML = `
 
             <div class="contributor-card">
 
@@ -755,8 +919,7 @@
                     Top Contributors
                 </h3>
 
-                ${
-                    data.map(user => `
+                ${data.map(user => `
 
                     <div class="contributor-item">
 
@@ -787,141 +950,185 @@
                     </div>
 
                     `).join("")
-                }
+                    }
 
             </div>
         `
-    }
-
-
-
-        function openIssueDetail(issueId){
-            window.location.href =
-            `issue-detail.html?id=${issueId}`
-        }
-
-        getIssues()
-        getTrendingCategories()
-        getTopContributors()
-
-
-        sortSelect.addEventListener(
-            "change",
-
-            function(){
-
-                getIssues()
             }
-        )
-        
-        categorySelect.addEventListener(
-            "change",
-            function(){
-                getIssues()
-            }
-        )
 
-        const logoutBtn =
-        document.getElementById("logoutBtn")
+            function updateVerificationCount() {
+
+                if (window.pendingCount > 0) {
+
+                    window.pendingCount--
+
+                    if (window.pendingCount === 0) {
+
+                        showVerificationOnly = false
+
+                        window.history.replaceState(
+                            {},
+                            "",
+                            "dashboard.html"
+                        )
+
+                        document.getElementById(
+                            "verificationBanner"
+                        ).style.display = "none"
+
+                        getIssues()
+
+                        return
+                    }
+                    else {
+
+                        document.getElementById(
+                            "verificationText"
+                        ).innerText =
+                            `${window.pendingCount} issues are awaiting community verification`
+                    }
+                }
+
+            }
+
+            function openIssueDetail(issueId) {
+                window.location.href =
+                    `issue-detail.html?id=${issueId}`
+            }
+
+            async function initDashboard() {
+
+                await loadVerificationBanner()
+
+                await getIssues()
+
+                getTrendingCategories()
+
+                getTopContributors()
+
+            }
+
+            initDashboard()
+
+
+            sortSelect.addEventListener(
+                "change",
+
+                function () {
+
+                    getIssues()
+                }
+            )
+
+            categorySelect.addEventListener(
+                "change",
+                function () {
+                    getIssues()
+                }
+            )
+
+            const logoutBtn =
+                document.getElementById("logoutBtn")
             logoutBtn.addEventListener(
                 "click",
-                function(){
+                function () {
 
                     localStorage.removeItem("token")
 
                     window.location.href = "login.html"
                 }
-        )
+            )
 
-        const reportIssueBtn =
-        document.getElementById("reportIssueBtn")
+            const reportIssueBtn =
+                document.getElementById("reportIssueBtn")
 
-        reportIssueBtn.addEventListener(
-            "click",
+            reportIssueBtn.addEventListener(
+                "click",
 
-            function(){
+                function () {
 
-                window.location.href =
-                "report-issue.html"
+                    window.location.href =
+                        "report-issue.html"
+                }
+            )
+
+            const myProfileBtn =
+                document.getElementById("myProfileBtn")
+
+            myProfileBtn.addEventListener(
+                "click",
+                function () {
+
+                    window.location.href =
+                        "My_profile.html"
+                }
+            )
+
+
+
+            const leaderboardBtn =
+                document.getElementById("leaderboardBtn")
+
+            leaderboardBtn.addEventListener(
+                "click",
+                function () {
+
+                    window.location.href =
+                        "leaderboard.html"
+                }
+            )
+
+            const resolvedBtn =
+                document.getElementById("resolvedBtn")
+
+            resolvedBtn.addEventListener(
+                "click",
+
+                function () {
+
+                    window.location.href =
+                        "resolved.html"
+                }
+            )
+
+
+
+            async function voteIssue(issueId) {
+
+                const token =
+                    localStorage.getItem("token")
+
+                const response =
+                    await fetch(
+                        "http://127.0.0.1:8000/vote",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization":
+                                    `Bearer ${token}`
+                            },
+
+                            body: JSON.stringify({
+                                issue_id: issueId
+                            })
+                        }
+                    )
+
+                const data =
+                    await response.json()
+
+                alert(data.message)
+
+                getIssues()
+                getTopContributors()
             }
-        )
-
-        const myProfileBtn =
-        document.getElementById("myProfileBtn")
-
-        myProfileBtn.addEventListener(
-            "click",
-            function(){
-
-                window.location.href =
-                "My_profile.html"
-            }
-        )
-        
 
 
-        const leaderboardBtn =
-        document.getElementById("leaderboardBtn")
-
-        leaderboardBtn.addEventListener(
-            "click",
-            function(){
-
-                window.location.href =
-                "leaderboard.html"
-            }
-        )
-
-        const resolvedBtn =
-        document.getElementById("resolvedBtn")
-
-        resolvedBtn.addEventListener(
-            "click",
-
-            function(){
-
-                window.location.href =
-                "resolved.html"
-            }
-        )
+        </script>
 
 
-
-        async function voteIssue(issueId){
-
-        const token =
-        localStorage.getItem("token")
-
-        const response =
-        await fetch(
-            "http://127.0.0.1:8000/vote",
-            {
-                method:"POST",
-
-                headers:{
-                    "Content-Type":"application/json",
-                    "Authorization":
-                    `Bearer ${token}`
-                },
-
-                body:JSON.stringify({
-                    issue_id:issueId
-                })
-            }
-        )
-
-        const data =
-        await response.json()
-
-        alert(data.message)
-
-        getIssues()
-        getTopContributors()
-    }
-
-
-    </script>
-
-    
 </body>
+
 </html>

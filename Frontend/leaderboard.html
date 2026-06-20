@@ -100,97 +100,116 @@ body {
     margin-bottom: 40px;
 }
 
-/* ── Podium ── */
-.podium-section {
+/* ── Two column layout: left table / right sticky Top 3 ── */
+.content-layout {
     display: flex;
-    justify-content: flex-start;
-    align-items: flex-end;
-    gap: 16px;
-    margin-bottom: 36px;
+    gap: 24px;
+    align-items: flex-start;
 }
 
-.podium-item {
+.left-col {
+    flex: 0 0 75%;
+    max-width: 75%;
+}
+
+.right-col {
+    flex: 0 0 25%;
+    max-width: 25%;
+    position: sticky;
+    top: 40px;
+}
+
+/* ── Top 3 Contributors card (refined, minimal) ── */
+.top3-card {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    padding: 28px 24px;
+}
+
+.top3-card h3 {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.top3-subtitle {
+    color: #9ca3af;
+    font-size: 12px;
+    margin-bottom: 24px;
+}
+
+.top3-item {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
+    padding: 14px 12px;
+    border-radius: 10px;
+    margin-bottom: 10px;
 }
 
-.podium-crown {
-    font-size: 22px;
-    line-height: 1;
+.top3-item:last-child {
+    margin-bottom: 0;
 }
 
-.podium-avatar {
+.top3-item.gold {
+    background: #fffbeb;
+    border-left: 3px solid #f59e0b;
+}
+
+.top3-item.silver {
+    background: #f8fafc;
+    border-left: 3px solid #94a3b8;
+}
+
+.top3-item.bronze {
+    background: #fff7ed;
+    border-left: 3px solid #cd7c3b;
+}
+
+.top3-avatar {
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
+    background: #dbeafe;
+    color: #2563eb;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: 700;
-    color: white;
-}
-
-.podium-item.rank-1 .podium-avatar {
-    width: 64px;
-    height: 64px;
-    font-size: 24px;
-    background: #f59e0b;
-    box-shadow: 0 0 0 4px #fef3c7;
-}
-
-.podium-item.rank-2 .podium-avatar {
-    width: 52px;
-    height: 52px;
-    font-size: 20px;
-    background: #94a3b8;
-    box-shadow: 0 0 0 3px #e2e8f0;
-}
-
-.podium-item.rank-3 .podium-avatar {
-    width: 46px;
-    height: 46px;
-    font-size: 18px;
-    background: #cd7c3b;
-    box-shadow: 0 0 0 3px #fde8d0;
-}
-
-.podium-name {
     font-size: 13px;
+    flex-shrink: 0;
+}
+
+.top3-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.top3-name {
     font-weight: 600;
-    color: #374151;
-    text-align: center;
+    color: #111827;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.podium-pts {
+.top3-sub {
     font-size: 12px;
-    color: #6b7280;
+    color: #9ca3af;
+    margin-top: 2px;
 }
 
-.podium-block {
-    border-radius: 10px 10px 0 0;
-    width: 80px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 22px;
-    font-weight: 800;
-    color: white;
-    letter-spacing: -0.5px;
-}
-
-.podium-item.rank-1 .podium-block {
-    height: 72px;
-    background: #f59e0b;
-}
-
-.podium-item.rank-2 .podium-block {
-    height: 52px;
-    background: #94a3b8;
-}
-
-.podium-item.rank-3 .podium-block {
-    height: 38px;
-    background: #cd7c3b;
+.top3-points {
+    flex-shrink: 0;
+    background: #dbeafe;
+    color: #1d4ed8;
+    padding: 4px 11px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
 }
 
 /* ── Leaderboard table card ── */
@@ -338,18 +357,30 @@ body {
         <h1 class="page-title">Top Contributors</h1>
         <p class="subtitle">People helping solve campus problems</p>
 
-        <!-- Podium (top 3) -->
-        <div class="podium-section" id="podiumSection"></div>
+        <div class="content-layout">
 
-        <!-- Full table -->
-        <div class="leaderboard-card">
-            <div class="lb-header">
-                <span>Rank</span>
-                <span>Student</span>
-                <span class="col-solved">Issues Solved</span>
-                <span class="col-points">Points</span>
+            <!-- LEFT (75%): Full table — unchanged -->
+            <div class="left-col">
+                <div class="leaderboard-card">
+                    <div class="lb-header">
+                        <span>Rank</span>
+                        <span>Student</span>
+                        <span class="col-solved">Issues Solved</span>
+                        <span class="col-points">Points</span>
+                    </div>
+                    <div id="leaderboardContainer"></div>
+                </div>
             </div>
-            <div id="leaderboardContainer"></div>
+
+            <!-- RIGHT (25%): Sticky Top 3 card — replaces podium -->
+            <div class="right-col">
+                <div class="top3-card">
+                    <h3>Top Contributors</h3>
+                    <p class="top3-subtitle">Our most active problem solvers</p>
+                    <div id="top3Container"></div>
+                </div>
+            </div>
+
         </div>
 
     </div>
@@ -363,41 +394,33 @@ async function getLeaderboard() {
     const response = await fetch("http://127.0.0.1:8000/leaderboard")
     const data = await response.json()
 
-    renderPodium(data)
+    renderTop3(data)
     renderTable(data)
 }
 
-function renderPodium(data) {
+function renderTop3(data) {
 
-    const podium = document.getElementById("podiumSection")
+    const container = document.getElementById("top3Container")
 
-    if (!data || data.length < 1) return
+    if (!data || data.length === 0) {
+        container.innerHTML = `<p style="color:#6b7280; font-size:13px;">No data yet</p>`
+        return
+    }
 
-    // Podium order: 2nd, 1st, 3rd
-    const order = [data[1], data[0], data[2]].filter(Boolean)
-    const ranks = data[1] ? [2, 1, 3] : [1]
+    const classes = ["gold", "silver", "bronze"]
 
-    const rankClass = { 1: "rank-1", 2: "rank-2", 3: "rank-3" }
+    const top3 = data.slice(0, 3)
 
-    let html = ""
-
-    order.forEach((user, i) => {
-
-        const rank = ranks[i]
-        const rClass = rankClass[rank]
-
-        html += `
-        <div class="podium-item ${rClass}">
-            ${rank === 1 ? '<div class="podium-crown">👑</div>' : '<div class="podium-crown" style="visibility:hidden">👑</div>'}
-            <div class="podium-avatar">${user.name[0].toUpperCase()}</div>
-            <div class="podium-name">${user.name}</div>
-            <div class="podium-pts">${user.points} pts</div>
-            <div class="podium-block">${rank}</div>
+    container.innerHTML = top3.map((user, index) => `
+        <div class="top3-item ${classes[index]}">
+            <div class="top3-avatar">${user.name[0].toUpperCase()}</div>
+            <div class="top3-info">
+                <div class="top3-name">${user.name}</div>
+                <div class="top3-sub">${user.issues_solved} issues solved</div>
+            </div>
+            <span class="top3-points">${user.points}</span>
         </div>
-        `
-    })
-
-    podium.innerHTML = html
+    `).join("")
 }
 
 function renderTable(data) {
