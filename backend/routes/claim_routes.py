@@ -225,6 +225,7 @@ def top_contributors():
             text("""
                 SELECT
                     users.name,
+                    users.avatar_url,
                     COUNT(*) as resolved_count
 
                 FROM claims
@@ -234,7 +235,7 @@ def top_contributors():
 
                 WHERE claims.status = 'resolved'
 
-                GROUP BY users.id, users.name
+                GROUP BY users.id, users.name, users.avatar_url
 
                 ORDER BY resolved_count DESC
 
@@ -254,6 +255,7 @@ def leaderboard():
             text("""
                 SELECT
                     users.name,
+                    users.avatar_url,
                     COUNT(*) as issues_solved,
                     COUNT(*) * 50 as points
 
@@ -264,7 +266,7 @@ def leaderboard():
 
                 WHERE claims.status = 'resolved'
 
-                GROUP BY users.id, users.name
+                GROUP BY users.id, users.name, users.avatar_url
 
                 ORDER BY points DESC
             """)

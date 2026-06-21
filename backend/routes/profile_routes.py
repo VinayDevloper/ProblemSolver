@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile, File
 from backend.db import engine
 from sqlalchemy import text
 from backend.routes.auth_routes import get_current_user, oauth2_scheme
 from pydantic import BaseModel
+import cloudinary.uploader
+from backend.cloudinary_config import *
 
 router = APIRouter()
 
@@ -68,7 +70,8 @@ def get_me(token: str = Depends(oauth2_scheme)):
                 year,
                 role,
                 group_name,
-                bio
+                bio,
+                avatar_url
             FROM users
             WHERE id = :id
         """),
@@ -86,8 +89,38 @@ def get_me(token: str = Depends(oauth2_scheme)):
             "year": row["year"],
             "role": row["role"],
             "group_name": row["group_name"],
-            "bio": row["bio"]
+            "bio": row["bio"],
+            "avatar_url": row["avatar_url"]
         }
+
+@router.post("/upload-avatar")
+def upload_avatar(
+    file: UploadFile = File(...),
+    token: str = Depends(oauth2_scheme)
+):
+    user = get_current_user(token)
+    
+    result = cloudinary.uploader.upload(file.file)
+    avatar_url = result["secure_url"]
+    
+    with engine.connect() as conn:
+        conn.execute(
+            text("""
+                UPDATE users
+                SET avatar_url = :avatar_url
+                WHERE id = :user_id
+            """),
+            {
+                "avatar_url": avatar_url,
+                "user_id": user["user_id"]
+            }
+        )
+        conn.commit()
+        
+    return {
+        "message": "Profile picture updated successfully",
+        "avatar_url": avatar_url
+    }
 
 @router.get("/my-issues")
 def get_my_issues(token: str = Depends(oauth2_scheme)):

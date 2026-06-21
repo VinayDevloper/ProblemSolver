@@ -15,15 +15,26 @@
             display:flex;
             justify-content:center;
             align-items:center;
-            height:100vh;
+            min-height:100vh;
+            margin:0;
+            padding:20px;
+            box-sizing:border-box;
         }
 
         .login-card{
             background:white;
             padding:40px;
-            width:350px;
+            width:100%;
+            max-width:350px;
             border-radius:12px;
             box-shadow:0 4px 20px rgba(0,0,0,0.08);
+            box-sizing:border-box;
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 20px;
+            }
         }
 
         .logo{
